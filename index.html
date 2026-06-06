@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>megameter.com</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="background-layer" aria-hidden="true">
+      <div class="breathing-orb"></div>
+    </div>
+
+    <main class="shell">
+      <section class="converter" aria-labelledby="site-title">
+        <p class="brand" id="site-title">megameter: automation for the modern age</p>
+        <h1 class="welcome-prompt" id="welcome-prompt" aria-live="polite">How can I help?</h1>
+
+        <form class="controls" id="converter-form">
+          <label class="field">
+            <span class="sr-only">Value</span>
+            <input id="value-input" type="text" inputmode="decimal" autocomplete="off" aria-describedby="site-title" placeholder="123.456">
+          </label>
+
+          <div class="unit-picker" id="unit-picker">
+            <select class="native-unit-select" id="unit-select" aria-hidden="true" tabindex="-1"></select>
+            <button class="unit-button" id="unit-button" type="button" aria-expanded="false" aria-haspopup="listbox">
+              <span id="unit-button-text">meter</span>
+              <span aria-hidden="true">v</span>
+            </button>
+
+            <div class="unit-menu" id="unit-menu" role="listbox" hidden>
+              <div class="unit-menu-scroll" id="unit-menu-scroll"></div>
+            </div>
+          </div>
+
+          <button class="compute-button" id="compute-button" type="submit">Compute</button>
+        </form>
+
+        <section class="output-stage" id="output-stage" aria-live="polite">
+          <div class="thinking-panel" id="thinking-panel" hidden>
+            <span class="spinner" aria-hidden="true"></span>
+            <p id="thinking-text">Initializing dimensional ontology...</p>
+          </div>
+
+          <output class="result" id="result" for="value-input unit-select">
+            <span class="result-value" id="result-value"></span>
+          </output>
+        </section>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div><span aria-hidden="true">&copy;</span> megameter inc. 2026</div>
+      <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">legal</a>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
