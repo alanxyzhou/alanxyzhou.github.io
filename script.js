@@ -199,6 +199,9 @@ const fitResultToStage = () => {
     return;
   }
 
+  // Enforce small baseline size to clear sizing memory and find constraints accurately
+  resultValue.style.setProperty("--result-size", "10px");
+
   const stageBounds = outputStage.getBoundingClientRect();
   let low = 1;
   let high = Math.min(260, stageBounds.height * 0.95);
@@ -208,7 +211,8 @@ const fitResultToStage = () => {
     resultValue.style.setProperty("--result-size", `${mid}px`);
 
     const valueBounds = resultValue.getBoundingClientRect();
-    if (valueBounds.width <= stageBounds.width && valueBounds.height <= stageBounds.height) {
+    // Added safety padding factor check against edge boundaries
+    if (valueBounds.width <= stageBounds.width * 0.92 && valueBounds.height <= stageBounds.height) {
       low = mid;
     } else {
       high = mid;
