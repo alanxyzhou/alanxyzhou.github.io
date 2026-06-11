@@ -264,6 +264,10 @@ const setRandomWelcomePrompt = () => {
 };
 
 const runComputation = () => {
+  if (!valueInput.value.trim()) {
+    return;
+  }
+
   window.clearInterval(thinkingInterval);
   window.clearTimeout(loadingTimeout);
 
