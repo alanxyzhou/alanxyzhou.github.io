@@ -193,6 +193,42 @@ const setLoadingState = (isLoading) => {
   result.hidden = isLoading;
 };
 
+const brand = document.querySelector(".brand");
+const welcomePrompt = document.querySelector(".welcome-prompt");
+
+const fitTextToWidth = (element, maxFontSize) => {
+  if (!element) return;
+
+  element.style.fontSize = "10px"; // Reset to small size to measure correctly
+
+  const parent = element.parentElement;
+  const maxWidth = parent.clientWidth * 0.95;
+
+  let low = 10;
+  let high = maxFontSize;
+  let best = 10;
+
+  while (low <= high) {
+    const mid = Math.floor((low + high) / 2);
+    element.style.fontSize = `${mid}px`;
+
+    if (element.scrollWidth <= maxWidth) {
+      best = mid;
+      low = mid + 1;
+    } else {
+      high = mid - 1;
+    }
+  }
+
+  element.style.fontSize = `${best}px`;
+};
+
+const fitAllText = () => {
+  fitTextToWidth(brand, 40);
+  fitTextToWidth(welcomePrompt, 80);
+  fitResultToStage();
+};
+
 const fitResultToStage = () => {
   if (result.hidden || result.classList.contains("is-muted")) {
     resultValue.style.removeProperty("--result-size");
@@ -224,6 +260,7 @@ const fitResultToStage = () => {
 
 const setRandomWelcomePrompt = () => {
   welcomePrompt.textContent = welcomePrompts[Math.floor(Math.random() * welcomePrompts.length)];
+  fitAllText();
 };
 
 const runComputation = () => {
@@ -241,7 +278,7 @@ const runComputation = () => {
     resultValue.textContent = computation.text;
     result.classList.toggle("is-muted", computation.isError);
     setLoadingState(false);
-    window.requestAnimationFrame(fitResultToStage);
+    window.requestAnimationFrame(fitAllText);
   }, 5000);
 };
 
@@ -252,7 +289,7 @@ setRandomWelcomePrompt();
 result.classList.add("is-muted");
 
 valueInput.addEventListener("input", sanitizeDecimalInput);
-window.addEventListener("resize", fitResultToStage);
+window.addEventListener("resize", fitAllText);
 unitButton.addEventListener("click", () => {
   setUnitMenuOpen(unitMenu.hidden);
 });
