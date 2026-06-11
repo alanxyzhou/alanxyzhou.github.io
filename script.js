@@ -1,85 +1,6 @@
-const units = [
-  { name: "meter", symbol: "m", mega: "Mm" },
-  { name: "kilogram", symbol: "kg", mega: "Mkg" },
-  { name: "second", symbol: "s", mega: "Ms" },
-  { name: "ampere", symbol: "A", mega: "MA" },
-  { name: "kelvin", symbol: "K", mega: "MK" },
-  { name: "mole", symbol: "mol", mega: "Mmol" },
-  { name: "candela", symbol: "cd", mega: "Mcd" },
-  { name: "radian", symbol: "rad", mega: "Mrad" },
-  { name: "steradian", symbol: "sr", mega: "Msr" },
-  { name: "hertz", symbol: "Hz", mega: "MHz" },
-  { name: "newton", symbol: "N", mega: "MN" },
-  { name: "pascal", symbol: "Pa", mega: "MPa" },
-  { name: "joule", symbol: "J", mega: "MJ" },
-  { name: "watt", symbol: "W", mega: "MW" },
-  { name: "coulomb", symbol: "C", mega: "MC" },
-  { name: "volt", symbol: "V", mega: "MV" },
-  { name: "farad", symbol: "F", mega: "MF" },
-  { name: "ohm", symbol: "\u03a9", mega: "M\u03a9" },
-  { name: "siemens", symbol: "S", mega: "MS" },
-  { name: "weber", symbol: "Wb", mega: "MWb" },
-  { name: "tesla", symbol: "T", mega: "MT" },
-  { name: "henry", symbol: "H", mega: "MH" },
-  { name: "Celsius", symbol: "\u00b0C", mega: "M\u00b0C" },
-  { name: "lumen", symbol: "lm", mega: "Mlm" },
-  { name: "lux", symbol: "lx", mega: "Mlx" },
-  { name: "becquerel", symbol: "Bq", mega: "MBq" },
-  { name: "gray", symbol: "Gy", mega: "MGy" },
-  { name: "sievert", symbol: "Sv", mega: "MSv" },
-  { name: "katal", symbol: "kat", mega: "Mkat" },
-  { name: "inch", symbol: "in", mega: "Min" },
-  { name: "foot", symbol: "ft", mega: "Mft" },
-  { name: "yard", symbol: "yd", mega: "Myd" },
-  { name: "mile", symbol: "mi", mega: "Mmi" },
-  { name: "pound", symbol: "lb", mega: "Mlb" },
-  { name: "ounce", symbol: "oz", mega: "Moz" },
-  { name: "gallon", symbol: "gal", mega: "Mgal" },
-  { name: "furlong", symbol: "fur", mega: "Mfur" },
-  { name: "chain", symbol: "ch", mega: "Mch" },
-  { name: "rod", symbol: "rd", mega: "Mrd" },
-  { name: "cubit", symbol: "cubit", mega: "Mcubit" },
-  { name: "span", symbol: "span", mega: "Mspan" },
-  { name: "barleycorn", symbol: "bc", mega: "Mbc" },
-  { name: "smoot", symbol: "smoot", mega: "Msmoot" },
-  { name: "beard-second", symbol: "bs", mega: "Mbs" },
-  { name: "warhol", symbol: "wh", mega: "Mwh" },
-  { name: "alignment sprint", symbol: "as", mega: "Mas" },
-  { name: "productivity aura", symbol: "pa", mega: "Mpa" },
-  { name: "OKR vapor", symbol: "okr", mega: "Mokr" },
-  { name: "founder radius", symbol: "fr", mega: "Mfr" },
-  { name: "stakeholder glow", symbol: "sg", mega: "Msg" },
-  { name: "agentic unit", symbol: "au", mega: "Mau" },
-  { name: "cloud resonance", symbol: "cr", mega: "Mcr" },
-  { name: "dashboard gravitas", symbol: "dg", mega: "Mdg" },
-  { name: "epistemic liquidity", symbol: "el", mega: "Mel" }
-];
-
-const welcomePrompts = [
-  "The oracle is prepared.",
-  "Proceed with magnitude.",
-  "The apparatus awaits.",
-  "A finer scale is possible.",
-  "Let us optimize the obvious.",
-  "Your number may enter.",
-  "Magnitude, governed.",
-  "The future has been normalized.",
-  "Automation, tastefully applied.",
-  "The machine is listening."
-];
-
-const thinkingTasks = [
-  "Constructing a trillion-parameter intuition lattice over SI dimensional manifolds...",
-  "Negotiating unit semantics with an imaginary standards committee...",
-  "Backpropagating through six centuries of metrological philosophy...",
-  "Running speculative beam search across every possible decimal placement...",
-  "Distilling the Platonic essence of magnitude into a single scalar...",
-  "Cross-validating with a synthetic council of overconfident measurement agents...",
-  "Tokenizing the universe into base units and asking it to be normal about it...",
-  "Performing high-dimensional humility alignment before dividing by one million...",
-  "Resolving latent ambiguity in the concept of 'big' using ceremonial matrix algebra...",
-  "Auditing the epistemic load-bearing capacity of the selected unit..."
-];
+import { units } from './consts/units.js';
+import { welcomePrompts } from './consts/splash.js';
+import { thinkingTasks } from './consts/thinking.js';
 
 const valueInput = document.querySelector("#value-input");
 const unitSelect = document.querySelector("#unit-select");
@@ -90,6 +11,7 @@ const unitMenuScroll = document.querySelector("#unit-menu-scroll");
 const resultValue = document.querySelector("#result-value");
 const result = document.querySelector("#result");
 const converterForm = document.querySelector("#converter-form");
+const brand = document.querySelector(".brand");
 const welcomePrompt = document.querySelector("#welcome-prompt");
 const computeButton = document.querySelector("#compute-button");
 const outputStage = document.querySelector("#output-stage");
@@ -193,26 +115,35 @@ const setLoadingState = (isLoading) => {
   result.hidden = isLoading;
 };
 
-const brand = document.querySelector(".brand");
-const welcomePrompt = document.querySelector(".welcome-prompt");
-
 const fitTextToWidth = (element, maxFontSize) => {
   if (!element) return;
 
-  element.style.fontSize = "10px"; // Reset to small size to measure correctly
-
   const parent = element.parentElement;
-  const maxWidth = parent.clientWidth * 0.95;
+  if (!parent) return;
 
-  let low = 10;
+  // Use a stable reference width from the parent
+  const maxWidth = parent.clientWidth * 0.95;
+  if (maxWidth <= 0) return;
+
+  // Temporarily disable constraints that interfere with measuring the "natural" width
+  const originalWidth = element.style.width;
+  const originalDisplay = element.style.display;
+  const originalWhiteSpace = element.style.whiteSpace;
+
+  element.style.width = "max-content";
+  element.style.display = "block";
+  element.style.whiteSpace = "nowrap";
+
+  let low = 8;
   let high = maxFontSize;
-  let best = 10;
+  let best = 8;
 
   while (low <= high) {
     const mid = Math.floor((low + high) / 2);
     element.style.fontSize = `${mid}px`;
 
-    if (element.scrollWidth <= maxWidth) {
+    // Measure the natural width of the text at this font size
+    if (element.offsetWidth <= maxWidth) {
       best = mid;
       low = mid + 1;
     } else {
@@ -220,13 +151,19 @@ const fitTextToWidth = (element, maxFontSize) => {
     }
   }
 
+  // Restore original styles and apply the best font size
+  element.style.width = originalWidth;
+  element.style.display = originalDisplay;
+  element.style.whiteSpace = originalWhiteSpace;
   element.style.fontSize = `${best}px`;
 };
 
 const fitAllText = () => {
-  fitTextToWidth(brand, 40);
-  fitTextToWidth(welcomePrompt, 80);
-  fitResultToStage();
+  window.requestAnimationFrame(() => {
+    fitTextToWidth(brand, 32);
+    fitTextToWidth(welcomePrompt, 72);
+    fitResultToStage();
+  });
 };
 
 const fitResultToStage = () => {
