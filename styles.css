@@ -16,7 +16,13 @@
   box-sizing: border-box;
 }
 
+html {
+  min-height: 100%;
+  background: #0d0f12;
+}
+
 body {
+  position: relative;
   margin: 0;
   min-height: 100svh;
   min-height: 100dvh;
@@ -25,16 +31,17 @@ body {
   overflow-y: auto;
   font-family: Georgia, "Times New Roman", serif;
   color: var(--ink);
-  background: linear-gradient(140deg, #111315 0%, #0d0f12 38%, #101114 100%);
+  background:
+    linear-gradient(140deg, #111315 0%, #0d0f12 38%, #101114 100%),
+    #0d0f12;
   display: flex;
   flex-direction: column;
 }
 
 .background-layer {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  min-height: 100svh;
-  min-height: 100dvh;
+  min-height: 100%;
   z-index: 0;
   display: grid;
   place-items: center;
@@ -118,7 +125,8 @@ body.is-a-little-bitch .source-guard {
 
 .shell {
   position: relative;
-  z-index: 1;
+  z-index: 2;
+  pointer-events: none;
   flex: 1 0 auto;
   min-height: 0;
   width: 100%;
@@ -139,6 +147,7 @@ body.is-a-little-bitch .source-guard {
   flex-direction: column;
   align-items: center;
   gap: clamp(0.35rem, 2vw, 1rem);
+  pointer-events: auto;
 }
 
 .brand {
@@ -379,7 +388,7 @@ body.is-a-little-bitch .source-guard {
   }
 
   .output-stage {
-    height: 112px;
+    --output-stage-height: 112px;
   }
 
   .welcome-prompt {
@@ -468,6 +477,7 @@ body.is-a-little-bitch .source-guard {
 }
 
 .output-stage {
+  --output-stage-height: 140px;
   width: 100%;
   min-width: 0;
   position: relative;
@@ -477,8 +487,14 @@ body.is-a-little-bitch .source-guard {
   justify-items: center;
   align-items: start;
   text-align: center;
-  height: 140px;
+  height: var(--output-stage-height);
   overflow: visible;
+}
+
+@media (max-width: 560px) {
+  .output-stage {
+    --output-stage-height: 112px;
+  }
 }
 
 .thinking-panel,
@@ -522,7 +538,11 @@ body.is-a-little-bitch .source-guard {
 }
 
 .upgrade-pricing-container {
-  margin-top: 16px;
+  position: absolute;
+  top: calc(var(--output-stage-height) + 16px);
+  left: 50%;
+  z-index: 4;
+  transform: translateX(-50%);
   width: 100%;
   max-width: 100%;
   display: flex;
@@ -531,13 +551,19 @@ body.is-a-little-bitch .source-guard {
   opacity: 0;
   max-height: 0;
   overflow: hidden;
+  pointer-events: none;
   transition: opacity 0.8s ease-out, max-height 0.8s ease-in-out;
 }
 
 .upgrade-pricing-container.is-visible {
   opacity: 1;
   max-height: none;
+  margin-bottom: 32px;
   overflow: visible;
+}
+
+.upgrade-pricing-container.is-visible .more-button {
+  pointer-events: auto;
 }
 
 
@@ -727,6 +753,10 @@ body.is-a-little-bitch .source-guard {
   border: 2px solid var(--gold);
   background: rgba(216, 198, 144, 0.05);
   box-shadow: 0 0 20px rgba(216, 198, 144, 0.1);
+}
+
+.tier-max.is-expanded {
+  margin-bottom: 48px;
 }
 
 .tier-max h3 {

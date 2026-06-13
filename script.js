@@ -23,33 +23,55 @@ const sourceGuard = document.querySelector("#source-guard");
 const sourceGuardText = document.querySelector("#source-guard-text");
 const maxMoreButton = document.querySelector("#max-more-button");
 const maxBaseFeaturesList = document.querySelector("#max-base-features");
+const maxTier = document.querySelector(".tier-max");
 const comedianValues = new Set([67, 69, 420]);
 const nativeUnitMedia = window.matchMedia("(max-width: 560px), (pointer: coarse)");
 
-const loadSnooperText = () => fetch(new URL("./consts/snooper.md", import.meta.url))
-  .then((response) => response.text())
-  .then((text) => {
-    sourceGuardText.textContent = text.trim().replace(/\n/g, " ");
-    fitSourceGuardText();
-  });
+const formatScientific = (digits, exponent) => {
+  const mantissaDigits = digits.slice(0, 7);
+  const mantissa = mantissaDigits.length > 1
+    ? `${mantissaDigits[0]}.${mantissaDigits.slice(1)}`
+    : mantissaDigits;
 
-const formatNumber = (value) => {
-  if (!Number.isFinite(value)) {
-    return "";
+  return `${mantissa.replace(/(\.\d*?)0+$/, "$1").replace(/\.$/, "")}e${exponent >= 0 ? "+" : ""}${exponent}`;
+};
+
+const addThousandsSeparators = (value) => value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+const formatMegaNumber = (input) => {
+  const [wholePart = "", fractionPart = ""] = input.split(".");
+  const rawDigits = `${wholePart}${fractionPart}`.replace(/^0+/, "");
+
+  if (!rawDigits) {
+    return "0";
   }
 
-  const formatted = new Intl.NumberFormat("en-US", {
-    maximumFractionDigits: 12
-  }).format(value);
+  const scale = -(fractionPart.length + 6);
+  const trailingZeroCount = rawDigits.length - rawDigits.replace(/0+$/, "").length;
+  const significantDigits = rawDigits.replace(/0+$/, "") || "0";
+  const exponent = significantDigits.length - 1 + trailingZeroCount + scale;
 
-  const digitCount = formatted.replace(/\D/g, "").length;
-  if (digitCount <= 12) {
-    return formatted;
+  if (significantDigits.length > 12 || exponent <= -7 || exponent >= 12) {
+    return formatScientific(significantDigits, exponent);
   }
 
-  return value.toExponential(6)
-    .replace(/(\.\d*?)0+e/, "$1e")
-    .replace(".e", "e");
+  const decimalIndex = rawDigits.length + scale;
+  let integerPart;
+  let decimalPart = "";
+
+  if (decimalIndex <= 0) {
+    integerPart = "0";
+    decimalPart = `${"0".repeat(Math.abs(decimalIndex))}${rawDigits}`;
+  } else if (decimalIndex >= rawDigits.length) {
+    integerPart = `${rawDigits}${"0".repeat(decimalIndex - rawDigits.length)}`;
+  } else {
+    integerPart = rawDigits.slice(0, decimalIndex);
+    decimalPart = rawDigits.slice(decimalIndex);
+  }
+
+  const trimmedDecimalPart = decimalPart.replace(/0+$/, "");
+  const decimalSuffix = trimmedDecimalPart ? `.${trimmedDecimalPart}` : "";
+  return `${addThousandsSeparators(integerPart)}${decimalSuffix}`;
 };
 
 const renderUnitOptions = () => {
@@ -174,11 +196,11 @@ const sanitizeDecimalInput = () => {
 };
 
 const computeResultText = () => {
-  const value = Number.parseFloat(valueInput.value);
+  const inputText = valueInput.value.trim();
   const exactValue = Number(valueInput.value);
   const unit = getSelectedUnit();
 
-  if (!Number.isFinite(value) || !unit) {
+  if (!/\d/.test(inputText) || !unit) {
     return {
       text: "Please enter a number",
       isError: true,
@@ -187,7 +209,7 @@ const computeResultText = () => {
   }
 
   return {
-    text: `${formatNumber(value / 1e6)} ${unit.mega}`,
+    text: `${formatMegaNumber(inputText)} ${unit.mega}`,
     isError: false,
     isTopLevel: comedianValues.has(exactValue)
   };
@@ -385,6 +407,10 @@ const fitResultToStage = () => {
   const stageBounds = outputStage.getBoundingClientRect();
   const maxWidth = Math.floor(stageBounds.width * 0.92);
   if (maxWidth <= 0) return;
+  const fixedStageHeight = Number.parseFloat(window.getComputedStyle(outputStage).getPropertyValue("--output-stage-height"));
+  const fitHeight = outputStage.classList.contains("has-upgrade-visible") && Number.isFinite(fixedStageHeight)
+    ? fixedStageHeight
+    : stageBounds.height;
 
   // Enforce small baseline size to clear sizing memory and find constraints accurately
   resultValue.style.setProperty("--result-size", "10px");
@@ -392,7 +418,7 @@ const fitResultToStage = () => {
   resultValue.style.whiteSpace = "nowrap";
 
   let low = 1;
-  let high = Math.min(260, Math.max(stageBounds.height * 0.95, 80));
+  let high = Math.min(260, Math.max(fitHeight * 0.95, 80));
 
   while (high - low > 1) {
     const mid = (low + high) / 2;
@@ -400,7 +426,7 @@ const fitResultToStage = () => {
 
     const valueBounds = resultValue.getBoundingClientRect();
     const fitsWidth = resultValue.scrollWidth <= maxWidth + 1;
-    const fitsHeight = valueBounds.height <= stageBounds.height;
+    const fitsHeight = valueBounds.height <= fitHeight;
 
     if (fitsWidth && fitsHeight) {
       low = mid;
@@ -413,22 +439,32 @@ const fitResultToStage = () => {
 };
 
 let currentRolodexIndex = -1;
+const recentRolodexIndices = [];
+const recentRolodexLimit = Math.floor(welcomePrompts.length / 2);
 
 const getNextRolodexIndex = () => {
   if (welcomePrompts.length <= 1) {
     return 0;
   }
 
-  let nextIndex;
-  do {
-    nextIndex = Math.floor(Math.random() * welcomePrompts.length);
-  } while (nextIndex === currentRolodexIndex);
+  const blockedIndices = new Set(recentRolodexIndices);
+  const candidates = welcomePrompts
+    .map((_, index) => index)
+    .filter((index) => !blockedIndices.has(index));
+  const pool = candidates.length > 0
+    ? candidates
+    : welcomePrompts.map((_, index) => index).filter((index) => index !== currentRolodexIndex);
 
-  return nextIndex;
+  return pool[Math.floor(Math.random() * pool.length)];
 };
 
 const setRandomRolodexMessage = () => {
   currentRolodexIndex = getNextRolodexIndex();
+  recentRolodexIndices.push(currentRolodexIndex);
+  while (recentRolodexIndices.length > recentRolodexLimit) {
+    recentRolodexIndices.shift();
+  }
+
   rolodex.textContent = welcomePrompts[currentRolodexIndex];
   fitHeadingText();
 };
@@ -473,6 +509,7 @@ const runComputation = () => {
 
     if (computeCount >= promptUpgradeAfter) {
       document.getElementById("upgrade-pricing-container").classList.add("is-visible");
+      outputStage.classList.add("has-upgrade-visible");
     }
 
     fitOutputText();
@@ -499,12 +536,14 @@ const isDevtoolsShortcut = (event) => {
     || (event.metaKey && event.altKey && ["i", "j", "c"].includes(key));
 };
 
-loadSnooperText();
 renderUnitOptions();
 unitSelect.value = getRandomSiUnitSymbol();
 updateUnitButton();
 syncUnitPickerMode();
 setRandomRolodexMessage();
+window.requestAnimationFrame(() => {
+  rolodex.classList.remove("is-transitioning");
+});
 window.setInterval(rotateRolodexMessage, 6000);
 result.classList.add("is-muted");
 fitAllText();
@@ -554,14 +593,6 @@ document.addEventListener("keydown", (event) => {
     unitButton.focus();
   }
 });
-document.addEventListener("contextmenu", (event) => {
-  if (!isDesktopInspectionSurface()) {
-    return;
-  }
-
-  event.preventDefault();
-  showSourceGuard();
-});
 converterForm.addEventListener("submit", (event) => {
   event.preventDefault();
   runComputation();
@@ -572,5 +603,6 @@ maxMoreButton.addEventListener("click", () => {
     "beforeend",
     maxExtraFeatures.map((feature) => `<li>${feature}</li>`).join("")
   );
+  maxTier.classList.add("is-expanded");
   maxMoreButton.hidden = true;
 });
