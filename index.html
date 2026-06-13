@@ -1,12 +1,121 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
 
 <head>
-  <meta http-equiv="refresh" content="0; url='pages/index.html'" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>megameter.com</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preload" as="image" href="prospectus/previews/a07_image.jpg" fetchpriority="low">
+  <link rel="preload" as="image" href="prospectus/previews/a08_image.jpg" fetchpriority="low">
+  <link rel="preload" as="image" href="prospectus/previews/a09_image.jpg" fetchpriority="low">
+  <link rel="preload" as="image" href="prospectus/previews/a10_image.jpg" fetchpriority="low">
+  <link rel="preload" as="image" href="prospectus/previews/a11_image.jpg" fetchpriority="low">
+  <link rel="preload" as="image" href="prospectus/previews/a12_image.jpg" fetchpriority="low">
+  <link rel="preload" as="image" href="prospectus/previews/a13_image.jpg" fetchpriority="low">
+  <link rel="preload" as="image" href="prospectus/previews/a15_image.jpg" fetchpriority="low">
 </head>
 
 <body>
-  <p>Redirecting to <a href="pages/index.html">megameter app</a>...</p>
+  <div class="background-layer" aria-hidden="true">
+    <div class="breathing-orb"></div>
+  </div>
+
+  <div class="source-guard" id="source-guard" aria-hidden="true">
+    <p id="source-guard-text">Are you seriously trying to steal my source code right now? Piracy is a crime, you know.
+      By the time my lawyers are through with you, you won't even be able to think about the words megameter dot com
+      without a restraining order appearing at your door. You don't know what world of shit you just got yourself into,
+      kiddo.</p>
+  </div>
+
+  <main class="shell">
+    <section class="converter" aria-labelledby="site-title">
+      <p class="brand" id="site-title">megameter: automation for the artificial intelligence era</p>
+      <div class="rolodex">
+        <h1 class="welcome-prompt is-transitioning" id="welcome-prompt" aria-live="polite"></h1>
+      </div>
+
+      <form class="controls" id="converter-form">
+        <label class="field">
+          <span class="sr-only">Value</span>
+          <input id="value-input" type="text" inputmode="decimal" autocomplete="off" aria-describedby="site-title"
+            placeholder="Enter your quantity">
+        </label>
+
+        <div class="unit-picker" id="unit-picker">
+          <select class="native-unit-select" id="unit-select" aria-hidden="true" tabindex="-1"></select>
+          <button class="unit-button" id="unit-button" type="button" aria-expanded="false" aria-haspopup="listbox">
+            <span id="unit-button-text">meter</span>
+          </button>
+
+          <div class="unit-menu" id="unit-menu" role="listbox" hidden>
+            <div class="unit-menu-scroll" id="unit-menu-scroll"></div>
+          </div>
+        </div>
+
+        <button class="compute-button" id="compute-button" type="submit">Compute</button>
+      </form>
+
+      <section class="output-stage" id="output-stage" aria-live="polite">
+        <div class="thinking-panel" id="thinking-panel" hidden>
+          <span class="spinner" aria-hidden="true"></span>
+          <p id="thinking-text">Initializing dimensional ontology...</p>
+        </div>
+
+        <output class="result" id="result" for="value-input unit-select">
+          <p class="snooper-deterrant" id="snooper-deterrant" hidden>Oh we got a real fucking comedian here huh?</p>
+          <span class="result-value" id="result-value"></span>
+        </output>
+
+        <div class="upgrade-pricing-container" id="upgrade-pricing-container">
+          <div class="usage-limits-text">
+            <p class="usage-limits-info">
+              <span>You're reaching your usage limits.</span>
+              <span>Upgrade for increased access.</span>
+            </p>
+            <p class="usage-limits-upsell">For enterprise pricing, please contact billing@megameter.com.</p>
+          </div>
+          <div class="pricing-tiers">
+
+            <div class="tier tier-free">
+              <h3 style="text-align: center;">Free (current)</h3>
+              <ul>
+                <li>10 queries/day</li>
+                <li>Quick responses</li>
+                <li>Basic thinking</li>
+              </ul>
+            </div>
+            <div class="tier tier-pro">
+              <h3 style="text-align: center;">Pro ($20/month)</h3>
+              <ul>
+                <li>5-20x increased usage</li>
+                <li>Faster responses</li>
+                <li>Improved reasoning</li>
+              </ul>
+            </div>
+            <div class="tier tier-max">
+              <h3 style="text-align: center;">Max ($150/month)</h3>
+              <ul id="max-base-features">
+                <li>Unlimited usage*</li>
+                <li>Blazingly fast responses</li>
+                <li>Deepest world models</li>
+              </ul>
+              <button id="max-more-button" class="more-button" type="button">Additional Features</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div><span aria-hidden="true">&copy;</span> megameter inc. 2026</div>
+    <div class="footer-links">
+      <a class="footer-cta" href="about.html">About Megameter</a>
+    </div>
+  </footer>
+
+  <script type="module" src="script.js"></script>
 </body>
 
 </html>

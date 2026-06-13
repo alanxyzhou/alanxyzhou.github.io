@@ -626,6 +626,31 @@ body.is-a-little-bitch .source-guard {
 }
 
 @media (max-width: 820px) {
+  .output-stage.has-upgrade-visible {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: var(--output-stage-height);
+  }
+
+  .output-stage.has-upgrade-visible .thinking-panel[hidden],
+  .output-stage.has-upgrade-visible .result[hidden] {
+    display: none !important;
+  }
+
+  .output-stage.has-upgrade-visible .result {
+    min-height: var(--output-stage-height);
+    justify-content: flex-start;
+  }
+
+  .output-stage.has-upgrade-visible .upgrade-pricing-container.is-visible {
+    position: static;
+    transform: none;
+    margin-top: 16px;
+    margin-bottom: 32px;
+    pointer-events: auto;
+  }
+
   .usage-limits-info span {
     display: block;
   }
