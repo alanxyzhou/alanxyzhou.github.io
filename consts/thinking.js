@@ -1,3 +1,7 @@
+export const thinkingDuration = 3200;
+export const thinkingIntervalDuration = 1400;
+export const promptUpgradeCount = 2;
+
 export const thinkingTasks = [
     "Constructing a trillion-parameter intuition lattice over SI dimensional manifolds...",
     "Negotiating unit semantics with an imaginary standards committee...",

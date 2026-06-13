@@ -1,6 +1,6 @@
 import { units } from './consts/units.js';
 import { welcomePrompts } from './consts/splash.js';
-import { thinkingTasks } from './consts/thinking.js';
+import { thinkingTasks, thinkingIntervalDuration, thinkingDuration, promptUpgradeCount } from './consts/thinking.js';
 
 const valueInput = document.querySelector("#value-input");
 const unitSelect = document.querySelector("#unit-select");
@@ -17,9 +17,6 @@ const computeButton = document.querySelector("#compute-button");
 const outputStage = document.querySelector("#output-stage");
 const thinkingPanel = document.querySelector("#thinking-panel");
 const thinkingText = document.querySelector("#thinking-text");
-
-let thinkingInterval = null;
-let loadingTimeout = null;
 
 const formatNumber = (value) => {
   if (!Number.isFinite(value)) {
@@ -52,7 +49,7 @@ const updateUnitButton = () => {
     return;
   }
 
-  unitButtonText.textContent = unit.name;
+  unitButtonText.textContent = `${unit.name} (${unit.symbol})`;
   unitButton.title = `${unit.name} (${unit.symbol})`;
 
   unitMenuScroll.querySelectorAll(".unit-option").forEach((option) => {
@@ -200,27 +197,39 @@ const setRandomWelcomePrompt = () => {
   fitAllText();
 };
 
+
+let thinkingMessageInterval = null;
+let thinkingTimeout = null;
+let computeCount = 0;
+
 const runComputation = () => {
   if (!valueInput.value.trim()) {
     return;
   }
 
-  window.clearInterval(thinkingInterval);
-  window.clearTimeout(loadingTimeout);
+  computeCount++;
+
+  window.clearInterval(thinkingMessageInterval);
+  window.clearTimeout(thinkingTimeout);
 
   result.classList.remove("is-muted");
   setThinkingText();
   setLoadingState(true);
 
-  thinkingInterval = window.setInterval(setThinkingText, 1800);
-  loadingTimeout = window.setTimeout(() => {
-    window.clearInterval(thinkingInterval);
+  thinkingMessageInterval = window.setInterval(setThinkingText, thinkingIntervalDuration);
+  thinkingTimeout = window.setTimeout(() => {
+    window.clearInterval(thinkingMessageInterval);
     const computation = computeResultText();
     resultValue.textContent = computation.text;
     result.classList.toggle("is-muted", computation.isError);
     setLoadingState(false);
+
+    if (computeCount >= promptUpgradeCount) {
+      document.getElementById("upgrade-pricing-container").classList.add("is-visible");
+    }
+
     window.requestAnimationFrame(fitAllText);
-  }, 5000);
+  }, thinkingDuration);
 };
 
 renderUnitOptions();
@@ -228,6 +237,7 @@ unitSelect.value = "m";
 updateUnitButton();
 setRandomWelcomePrompt();
 result.classList.add("is-muted");
+fitAllText();
 
 valueInput.addEventListener("input", sanitizeDecimalInput);
 window.addEventListener("resize", fitAllText);

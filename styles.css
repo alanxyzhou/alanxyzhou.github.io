@@ -12,10 +12,6 @@
   --shadow: 0 28px 120px rgba(0, 0, 0, 0.4);
 }
 
-[hidden] {
-  display: none !important;
-}
-
 * {
   box-sizing: border-box;
 }
@@ -74,7 +70,7 @@ body {
 .shell {
   position: relative;
   z-index: 1;
-  flex: 1;
+  height: 100vh;
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
@@ -82,7 +78,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  padding: 0 20px;
 }
 
 .converter {
@@ -90,21 +86,27 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
+  gap: 1.5rem;
+  /* Removed the negative transform that was pushing content off-screen */
 }
 
 .brand {
   margin: 0;
   color: rgba(216, 198, 144, 0.4);
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1rem, 4vw, 2.5rem);
-  /* Responsive size */
+  font-size: 32px;
+  /* Stable size for measurement */
+  min-height: 48px;
+  /* Reserved space */
   font-weight: 400;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .welcome-prompt {
@@ -112,15 +114,21 @@ body {
   text-align: center;
   color: rgba(236, 229, 206, 0.8);
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(1.5rem, 7vw, 5rem);
-  /* Responsive size */
+  font-size: 72px;
+  /* Stable size for measurement */
+  min-height: 100px;
+  /* Reserved space */
   font-weight: 400;
   line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
 
 .controls {
   display: flex;
@@ -214,8 +222,15 @@ body {
 }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .unit-menu-scroll {
@@ -262,16 +277,151 @@ body {
 
 .output-stage {
   width: 100%;
-  min-height: 120px;
+  min-height: 320px;
+  /* Reduced from 400px to avoid pushing off-screen */
+  position: relative;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   text-align: center;
+  padding-top: 20px;
+}
+
+.thinking-panel,
+.result {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.thinking-panel[hidden],
+.result[hidden] {
+  display: flex !important;
+  /* Override default hidden display:none */
+  opacity: 0;
+  pointer-events: none;
 }
 
 .result-value {
   font-family: Georgia, serif;
   font-size: var(--result-size, 2rem);
+  color: var(--gold);
+}
+
+.upgrade-pricing-container {
+  margin-top: 24px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 1.0s ease-out, visibility 0.5s ease-out;
+}
+
+.upgrade-pricing-container.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.usage-limits-info {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.usage-limits-upsell {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.pricing-tiers {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  max-width: 850px;
+  justify-content: center;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tier {
+  flex: 1;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 16px;
+  border-radius: 12px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tier h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.tier ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tier ul li::before {
+  content: "•";
+  margin-right: 8px;
+  color: var(--dim);
+}
+
+.tier-free {
+  border-color: #4a4a4a;
+}
+
+.tier-pro {
+  border-color: #9bbcff;
+  background: rgba(155, 188, 255, 0.05);
+}
+
+.tier-pro h3 {
+  color: #9bbcff;
+}
+
+.tier-max {
+  border: 2px solid var(--gold);
+  background: rgba(216, 198, 144, 0.05);
+  box-shadow: 0 0 20px rgba(216, 198, 144, 0.1);
+}
+
+.tier-max h3 {
   color: var(--gold);
 }
 
