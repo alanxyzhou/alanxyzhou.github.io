@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About | megameter.com</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .about-content {
+      position: relative;
+      z-index: 1;
+      width: min(100% - 32px, 800px);
+      margin: 0 auto;
+      padding: 80px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 60px;
+    }
+
+    .gallery {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      width: 100%;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .info-section {
+      text-align: center;
+      max-width: 650px;
+    }
+
+    .info-section h1 {
+      font-family: Georgia, serif;
+      font-size: 3rem;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+
+    .info-section p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--muted);
+      text-align: justify;
+      text-align-last: center;
+    }
+
+    .back-home {
+      margin-top: 40px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="background-layer" aria-hidden="true">
+    <div class="breathing-orb"></div>
+  </div>
+
+  <main class="about-content">
+    <div class="gallery">
+      <img src="prospectus/a07_image.jpg" alt="Prospectus image 07">
+      <img src="prospectus/a08_image.jpg" alt="Prospectus image 08">
+      <img src="prospectus/a09_image.jpg" alt="Prospectus image 09">
+      <img src="prospectus/a10_image.jpg" alt="Prospectus image 10">
+      <img src="prospectus/a11_image.jpg" alt="Prospectus image 11">
+      <img src="prospectus/a12_image.jpg" alt="Prospectus image 12">
+      <img src="prospectus/a13_image.jpg" alt="Prospectus image 13">
+      <img src="prospectus/a15_image.jpg" alt="Prospectus image 15">
+    </div>
+
+    <section class="info-section">
+      <h1>Who is Megameter?</h1>
+      <p>{bullshit}</p>
+    </section>
+
+    <div class="back-home">
+      <a href="index.html" class="footer a">Back to apparatus</a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div><span aria-hidden="true">&copy;</span> megameter inc. 2026</div>
+  </footer>
+</body>
+
+</html>

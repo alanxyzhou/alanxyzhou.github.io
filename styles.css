@@ -87,18 +87,36 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 1rem;
 }
 
 .brand {
   margin: 0;
   color: rgba(216, 198, 144, 0.4);
-  font-family: Baskerville, "Baskerville Old Face", "Times New Roman", serif;
+  font-family: Georgia, "Times New Roman", serif;
   font-size: 32px;
   /* Stable size for measurement */
-  min-height: 48px;
-  /* Reserved space */
+  min-height: 40px;
   font-weight: 400;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.welcome-prompt {
+  margin: 0;
+  text-align: center;
+  color: rgba(236, 229, 206, 0.8);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 72px;
+  /* Stable size for measurement */
+  min-height: 80px;
+  font-weight: 400;
+  line-height: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -108,24 +126,6 @@ body {
   justify-content: center;
 }
 
-.welcome-prompt {
-  margin: 0;
-  text-align: center;
-  color: rgba(236, 229, 206, 0.8);
-  font-family: Baskerville, "Baskerville Old Face", "Times New Roman", serif;
-  font-size: 72px;
-  /* Stable size for measurement */
-  min-height: 100px;
-  /* Reserved space */
-  font-weight: 400;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 
 .controls {
@@ -329,17 +329,23 @@ body {
   visibility: visible;
 }
 
+.usage-limits-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+
 .usage-limits-info {
   color: var(--muted);
   font-size: 0.9rem;
-  margin: 0;
 }
 
 .usage-limits-upsell {
   color: var(--dim);
   font-size: 0.8rem;
   font-style: italic;
-  margin: 0;
 }
 
 .pricing-tiers {
@@ -447,6 +453,10 @@ body {
   }
 }
 
+p {
+  margin: 0;
+}
+
 .footer {
   position: relative;
   z-index: 1;
@@ -458,6 +468,17 @@ body {
   color: var(--dim);
   font-size: 0.875rem;
   background: transparent;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.separator {
+  color: var(--line);
+  font-weight: 300;
 }
 
 .footer a {

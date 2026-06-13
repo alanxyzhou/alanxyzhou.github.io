@@ -47,11 +47,13 @@
 
         <output class="result" id="result" for="value-input unit-select">
           <span class="result-value" id="result-value"></span>
-
           <div class="upgrade-pricing-container" id="upgrade-pricing-container">
-            <p class="usage-limits-info">You're reaching your usage limits. Upgrade for increased access.</p>
-            <p class="usage-limits-upsell">For enterprise pricing, please contact billing@megameter.com.</p>
+            <div class="usage-limits-text">
+              <p class="usage-limits-info">You're reaching your usage limits. Upgrade for increased access.</p>
+              <p class="usage-limits-upsell">For enterprise pricing, please contact billing@megameter.com.</p>
+            </div>
             <div class="pricing-tiers">
+
               <div class="tier tier-free">
                 <h3 style="text-align: center;">Free (current)</h3>
                 <ul>
@@ -85,7 +87,11 @@
 
   <footer class="footer">
     <div><span aria-hidden="true">&copy;</span> megameter inc. 2026</div>
-    <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">legal</a>
+    <div class="footer-links">
+      <a href="about.html">about</a>
+      <span class="separator" aria-hidden="true">|</span>
+      <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">legal</a>
+    </div>
   </footer>
 
   <script type="module" src="script.js"></script>
