@@ -19,4 +19,6 @@ accomplish every day. At Megameter, we believe that numbers will one day be used
 in every aspect of life, without anyone even noticing: Banking. Engineering.
 Social media. In the future, everything will be built using numbers.
 
+Every number you contribute lays another brick in the path to success.
+
 Join us in creating the future.
