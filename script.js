@@ -19,7 +19,7 @@ const outputStage = document.querySelector("#output-stage");
 const thinkingPanel = document.querySelector("#thinking-panel");
 const thinkingText = document.querySelector("#thinking-text");
 const maxMoreButton = document.querySelector("#max-more-button");
-const maxExtraFeaturesList = document.querySelector("#max-extra-features");
+const maxBaseFeaturesList = document.querySelector("#max-base-features");
 
 const formatNumber = (value) => {
   if (!Number.isFinite(value)) {
@@ -285,9 +285,10 @@ converterForm.addEventListener("submit", (event) => {
   runComputation();
 });
 
-maxExtraFeaturesList.innerHTML = maxExtraFeatures.map(feature => `<li>${feature}</li>`).join("");
 maxMoreButton.addEventListener("click", () => {
-  const isHidden = maxExtraFeaturesList.style.display === "none";
-  maxExtraFeaturesList.style.display = isHidden ? "block" : "none";
-  maxMoreButton.textContent = isHidden ? "less ▴" : "more ▾";
+  maxBaseFeaturesList.insertAdjacentHTML(
+    "beforeend",
+    maxExtraFeatures.map((feature) => `<li>${feature}</li>`).join("")
+  );
+  maxMoreButton.hidden = true;
 });

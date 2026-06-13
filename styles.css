@@ -18,10 +18,10 @@
 
 body {
   margin: 0;
-  height: 100vh;
+  min-height: 100vh;
   width: 100vw;
-  overflow: hidden;
-  /* Anchor to window size, no scroll */
+  overflow-x: hidden;
+  overflow-y: auto;
   font-family: Georgia, "Times New Roman", serif;
   color: var(--ink);
   background: linear-gradient(140deg, #111315 0%, #0d0f12 38%, #101114 100%);
@@ -71,7 +71,8 @@ body {
 .shell {
   position: relative;
   z-index: 1;
-  height: 100vh;
+  flex: 1 0 auto;
+  min-height: 0;
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
@@ -79,7 +80,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 0 10px;
+  padding: 24px 10px;
 }
 
 .converter {
@@ -341,8 +342,8 @@ body {
 
 .upgrade-pricing-container.is-visible {
   opacity: 1;
-  max-height: 1000px;
-  /* Large enough to fit content */
+  max-height: none;
+  overflow: visible;
 }
 
 
@@ -418,7 +419,7 @@ body {
 }
 
 .tier ul li::before {
-  content: "•";
+  content: "\2022";
   margin-right: 8px;
   color: var(--dim);
 }
@@ -428,41 +429,19 @@ body {
   border: none;
   color: var(--gold);
   font-size: 0.85rem;
-  padding: 8px 0;
+  line-height: 1.2;
+  padding: 3px 10px;
   cursor: pointer;
-  text-decoration: underline;
-  width: 100%;
-  text-align: center;
+  text-decoration: none;
+  align-self: center;
+  font-family: inherit;
+  opacity: 0.82;
+  transition: color 0.2s, opacity 0.2s;
 }
 
 .more-button:hover {
   color: var(--ink);
-}
-
-#max-extra-features {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font-size: 0.85rem;
-  color: var(--muted);
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 6px;
-}
-
-#max-extra-features li {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font-size: 0.85rem;
-  color: var(--muted);
-}
-
-#max-extra-features li::before {
-  content: "•";
-  margin-right: 8px;
-  color: var(--dim);
+  opacity: 1;
 }
 
 .tier-free {
@@ -482,7 +461,6 @@ body {
   border: 2px solid var(--gold);
   background: rgba(216, 198, 144, 0.05);
   box-shadow: 0 0 20px rgba(216, 198, 144, 0.1);
-  flex: 1;
 }
 
 .tier-max h3 {
