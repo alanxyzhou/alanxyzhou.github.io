@@ -53,18 +53,23 @@
     }
 
     .info-section h1 {
-      font-family: Georgia, serif;
+      font-family: Georgia, "Times New Roman", serif;
       font-size: 3rem;
       color: var(--gold);
       margin-bottom: 24px;
     }
 
     .info-section p {
+      font-family: Georgia, "Times New Roman", serif;
       font-size: 1.1rem;
       line-height: 1.6;
       color: var(--muted);
-      text-align: justify;
-      text-align-last: center;
+      text-align: left;
+      margin-bottom: 1.5rem;
+    }
+
+    .info-section p:last-child {
+      margin-bottom: 0;
     }
 
     .back-home {
@@ -85,7 +90,7 @@
 
     <section class="info-section">
       <h1 id="about-title"></h1>
-      <p id="about-text"></p>
+      <div id="about-text"></div>
     </section>
 
     <div class="back-home">
@@ -105,15 +110,16 @@
     fetch('../consts/about.md')
       .then(response => response.text())
       .then(text => {
-        // Process Markdown-style newlines:
-        // 1. Single newlines -> spaces (for easy IDE word-wrap)
-        // 2. Double newlines -> actual breaks
-        const processedText = text
+        // Robust Markdown-style processing:
+        // 1. Split by blank lines (double newlines or lines with only spaces)
+        // 2. In each paragraph, replace single newlines with spaces
+        // 3. Wrap each paragraph in <p> tags
+        const paragraphs = text
           .trim()
-          .replace(/([^\n])\n([^\n])/g, '$1 $2')
-          .replace(/\n\n+/g, '<br><br>');
+          .split(/\n\s*\n/)
+          .map(p => `<p>${p.replace(/\n/g, ' ').trim()}</p>`);
 
-        document.getElementById('about-text').innerHTML = processedText;
+        document.getElementById('about-text').innerHTML = paragraphs.join('');
       });
 
     // Dynamically Build Gallery
