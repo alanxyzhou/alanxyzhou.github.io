@@ -276,6 +276,18 @@ body {
   cursor: not-allowed;
 }
 
+@media (max-width: 480px) {
+  .controls {
+    flex-direction: column;
+  }
+
+  .field,
+  .unit-picker,
+  .compute-button {
+    width: 100%;
+  }
+}
+
 .output-stage {
   width: 100%;
   position: relative;
@@ -311,6 +323,8 @@ body {
   font-family: Georgia, serif;
   font-size: var(--result-size, 2rem);
   color: var(--gold);
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 .upgrade-pricing-container {
