@@ -353,22 +353,31 @@ body.is-a-little-bitch .source-guard {
 
 @media (max-width: 560px) {
   .brand {
+    width: calc(100vw - 20px);
+    max-width: none;
+    max-height: 2.24em;
+    font-size: clamp(12px, 3.75vw, 16px);
+    line-height: 1.12;
     overflow-wrap: anywhere;
+    overflow: hidden;
     text-overflow: clip;
     text-wrap: balance;
     white-space: normal;
     display: block;
-    max-width: 100%;
   }
 
   .rolodex {
-    height: 58px;
+    height: 68px;
   }
 
   .welcome-prompt {
+    max-height: 100%;
+    font-size: clamp(24px, 9.2vw, 36px);
+    line-height: 0.98;
     white-space: normal;
     overflow-wrap: anywhere;
     text-overflow: clip;
+    text-wrap: balance;
   }
 
   .controls {

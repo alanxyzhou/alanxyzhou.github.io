@@ -185,35 +185,47 @@ const fitTextToWidth = (element, maxFontSize, options = {}) => {
   const originalWhiteSpace = element.style.whiteSpace;
   const originalOverflowWrap = element.style.overflowWrap;
 
+  const minFontSize = options.minFontSize ?? 8;
   const mobileTwoLines = options.mobileTwoLines && window.matchMedia("(max-width: 560px)").matches;
   const maxLines = options.maxLines ?? (mobileTwoLines ? 2 : 1);
-  const allowWrapping = maxLines > 1;
 
-  element.style.width = allowWrapping ? `${maxWidth}px` : "max-content";
-  element.style.display = "block";
-  element.style.whiteSpace = allowWrapping ? "normal" : "nowrap";
-  element.style.overflowWrap = allowWrapping ? "anywhere" : originalOverflowWrap;
+  const findBestFontSize = (lineCount) => {
+    const allowWrapping = lineCount > 1;
+    element.style.width = allowWrapping ? `${maxWidth}px` : "max-content";
+    element.style.display = "block";
+    element.style.whiteSpace = allowWrapping ? "normal" : "nowrap";
+    element.style.overflowWrap = allowWrapping ? "anywhere" : originalOverflowWrap;
 
-  const minFontSize = options.minFontSize ?? 8;
-  let low = minFontSize;
-  let high = maxFontSize;
-  let best = minFontSize;
+    let low = minFontSize;
+    let high = maxFontSize;
+    let best = minFontSize;
 
-  while (low <= high) {
-    const mid = Math.floor((low + high) / 2);
-    element.style.fontSize = `${mid}px`;
+    while (low <= high) {
+      const mid = Math.floor((low + high) / 2);
+      element.style.fontSize = `${mid}px`;
 
-    const textBounds = element.getBoundingClientRect();
-    const lineHeight = getLineHeight(element, mid);
-    const fitsWidth = allowWrapping ? element.scrollWidth <= maxWidth + 1 : element.offsetWidth <= maxWidth;
-    const fitsLines = textBounds.height <= lineHeight * maxLines + 1;
+      const textBounds = element.getBoundingClientRect();
+      const lineHeight = getLineHeight(element, mid);
+      const fitsWidth = allowWrapping ? element.scrollWidth <= maxWidth + 1 : element.offsetWidth <= maxWidth;
+      const fitsLines = textBounds.height <= lineHeight * lineCount + 1;
 
-    if (fitsWidth && fitsLines) {
-      best = mid;
-      low = mid + 1;
-    } else {
-      high = mid - 1;
+      if (fitsWidth && fitsLines) {
+        best = mid;
+        low = mid + 1;
+      } else {
+        high = mid - 1;
+      }
     }
+
+    return best;
+  };
+
+  let best = findBestFontSize(maxLines);
+  if (options.preferSingleLine && maxLines > 1) {
+    const singleLineBest = findBestFontSize(1);
+    best = singleLineBest >= (options.singleLineMinFontSize ?? minFontSize)
+      ? singleLineBest
+      : best;
   }
 
   // Restore original styles and apply the best font size
@@ -233,15 +245,20 @@ const fitAllText = () => {
 
   fitTextFrameId = window.requestAnimationFrame(() => {
     fitTextFrameId = null;
-    fitTextToWidth(brand, 32, {
-      mobileTwoLines: true,
-      minFontSize: window.matchMedia("(max-width: 560px)").matches ? 18 : 8
-    });
+    if (window.matchMedia("(max-width: 560px)").matches) {
+      brand.style.removeProperty("font-size");
+    } else {
+      fitTextToWidth(brand, 32);
+    }
     const isMobileRolodex = window.matchMedia("(max-width: 560px)").matches;
-    fitTextToWidth(rolodex, 72, {
-      maxLines: isMobileRolodex ? 2 : 1,
-      minFontSize: isMobileRolodex ? 18 : 24
-    });
+    if (isMobileRolodex) {
+      rolodex.style.removeProperty("font-size");
+    } else {
+      fitTextToWidth(rolodex, 72, {
+        maxLines: 1,
+        minFontSize: 24
+      });
+    }
     fitResultToStage();
     fitSourceGuardText();
   });
