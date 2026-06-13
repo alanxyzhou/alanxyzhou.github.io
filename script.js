@@ -1,6 +1,7 @@
 import { units } from './consts/units.js';
 import { welcomePrompts } from './consts/splash.js';
 import { thinkingTasks, getThinkingIntervalDuration, getThinkingDuration, promptUpgradeAfter } from './consts/thinking.js';
+import { maxExtraFeatures } from './consts/max-features.js';
 
 const valueInput = document.querySelector("#value-input");
 const unitSelect = document.querySelector("#unit-select");
@@ -17,6 +18,8 @@ const computeButton = document.querySelector("#compute-button");
 const outputStage = document.querySelector("#output-stage");
 const thinkingPanel = document.querySelector("#thinking-panel");
 const thinkingText = document.querySelector("#thinking-text");
+const maxMoreButton = document.querySelector("#max-more-button");
+const maxExtraFeaturesList = document.querySelector("#max-extra-features");
 
 const formatNumber = (value) => {
   if (!Number.isFinite(value)) {
@@ -280,4 +283,11 @@ document.addEventListener("keydown", (event) => {
 converterForm.addEventListener("submit", (event) => {
   event.preventDefault();
   runComputation();
+});
+
+maxExtraFeaturesList.innerHTML = maxExtraFeatures.map(feature => `<li>${feature}</li>`).join("");
+maxMoreButton.addEventListener("click", () => {
+  const isHidden = maxExtraFeaturesList.style.display === "none";
+  maxExtraFeaturesList.style.display = isHidden ? "block" : "none";
+  maxMoreButton.textContent = isHidden ? "less ▴" : "more ▾";
 });

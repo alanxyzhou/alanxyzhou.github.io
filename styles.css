@@ -421,6 +421,40 @@ body {
   color: var(--dim);
 }
 
+.more-button {
+  background: transparent;
+  border: none;
+  color: var(--gold);
+  font-size: 0.85rem;
+  padding: 8px 0;
+  cursor: pointer;
+  text-decoration: underline;
+  width: 100%;
+  text-align: center;
+}
+
+.more-button:hover {
+  color: var(--ink);
+}
+
+#max-extra-features {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85rem;
+  color: var(--muted);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+#max-extra-features li::before {
+  content: "•";
+  margin-right: 8px;
+  color: var(--dim);
+}
+
 .tier-free {
   border-color: #4a4a4a;
 }
@@ -438,6 +472,7 @@ body {
   border: 2px solid var(--gold);
   background: rgba(216, 198, 144, 0.05);
   box-shadow: 0 0 20px rgba(216, 198, 144, 0.1);
+  flex: 1;
 }
 
 .tier-max h3 {
