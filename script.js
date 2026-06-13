@@ -152,7 +152,13 @@ const setLoadingState = (isLoading) => {
   }
 };
 
-const fitTextToWidth = (element, maxFontSize) => {
+const getLineHeight = (element, fontSize) => {
+  const computedLineHeight = window.getComputedStyle(element).lineHeight;
+  const lineHeight = Number.parseFloat(computedLineHeight);
+  return Number.isFinite(lineHeight) ? lineHeight : fontSize * 1.2;
+};
+
+const fitTextToWidth = (element, maxFontSize, options = {}) => {
   if (!element) return;
 
   const parent = element.parentElement;
@@ -166,10 +172,15 @@ const fitTextToWidth = (element, maxFontSize) => {
   const originalWidth = element.style.width;
   const originalDisplay = element.style.display;
   const originalWhiteSpace = element.style.whiteSpace;
+  const originalOverflowWrap = element.style.overflowWrap;
 
-  element.style.width = "max-content";
+  const allowTwoLines = options.mobileTwoLines && window.matchMedia("(max-width: 560px)").matches;
+  const maxLines = allowTwoLines ? 2 : 1;
+
+  element.style.width = allowTwoLines ? `${maxWidth}px` : "max-content";
   element.style.display = "block";
-  element.style.whiteSpace = "nowrap";
+  element.style.whiteSpace = allowTwoLines ? "normal" : "nowrap";
+  element.style.overflowWrap = allowTwoLines ? "anywhere" : originalOverflowWrap;
 
   let low = 8;
   let high = maxFontSize;
@@ -179,8 +190,12 @@ const fitTextToWidth = (element, maxFontSize) => {
     const mid = Math.floor((low + high) / 2);
     element.style.fontSize = `${mid}px`;
 
-    // Measure the natural width of the text at this font size
-    if (element.offsetWidth <= maxWidth) {
+    const textBounds = element.getBoundingClientRect();
+    const lineHeight = getLineHeight(element, mid);
+    const fitsWidth = allowTwoLines ? element.scrollWidth <= maxWidth + 1 : element.offsetWidth <= maxWidth;
+    const fitsLines = textBounds.height <= lineHeight * maxLines + 1;
+
+    if (fitsWidth && fitsLines) {
       best = mid;
       low = mid + 1;
     } else {
@@ -192,12 +207,13 @@ const fitTextToWidth = (element, maxFontSize) => {
   element.style.width = originalWidth;
   element.style.display = originalDisplay;
   element.style.whiteSpace = originalWhiteSpace;
+  element.style.overflowWrap = originalOverflowWrap;
   element.style.fontSize = `${best}px`;
 };
 
 const fitAllText = () => {
   window.requestAnimationFrame(() => {
-    fitTextToWidth(brand, 32);
+    fitTextToWidth(brand, 32, { mobileTwoLines: true });
     fitTextToWidth(welcomePrompt, 72);
     fitResultToStage();
     fitSourceGuardText();
@@ -332,7 +348,21 @@ const isDevtoolsShortcut = (event) => {
     || (event.ctrlKey && key === "u");
 };
 
+const isTextEntryActive = () => {
+  const activeElement = document.activeElement;
+  return activeElement instanceof HTMLInputElement
+    || activeElement instanceof HTMLTextAreaElement
+    || activeElement?.isContentEditable;
+};
+
+const isTouchViewport = () => window.matchMedia("(pointer: coarse)").matches
+  || window.matchMedia("(max-width: 820px)").matches;
+
 const detectDevtoolsByViewport = () => {
+  if (isTextEntryActive() || isTouchViewport()) {
+    return;
+  }
+
   const widthGap = Math.abs(window.outerWidth - window.innerWidth);
   const heightGap = Math.abs(window.outerHeight - window.innerHeight);
 
