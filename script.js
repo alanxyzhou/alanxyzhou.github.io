@@ -27,7 +27,6 @@ const maxBaseFeaturesList = document.querySelector("#max-base-features");
 const maxTier = document.querySelector(".tier-max");
 const comedianValues = new Set([67, 69, 420]);
 const nativeUnitMedia = window.matchMedia("(max-width: 560px), (pointer: coarse)");
-const mobilePricingMedia = window.matchMedia("(max-width: 820px)");
 
 const formatScientific = (digits, exponent) => {
   const mantissaDigits = digits.slice(0, 7);
@@ -440,16 +439,6 @@ const fitResultToStage = () => {
   resultValue.style.setProperty("--result-size", `${Math.floor(low)}px`);
 };
 
-const updateMobileUpgradeReserve = () => {
-  if (!mobilePricingMedia.matches || !outputStage.classList.contains("has-upgrade-visible")) {
-    outputStage.style.removeProperty("--mobile-upgrade-reserve");
-    return;
-  }
-
-  const reserve = Math.ceil(upgradePricingContainer.getBoundingClientRect().height + 48);
-  outputStage.style.setProperty("--mobile-upgrade-reserve", `${reserve}px`);
-};
-
 let currentRolodexIndex = -1;
 const recentRolodexIndices = [];
 const recentRolodexLimit = Math.floor(welcomePrompts.length / 2);
@@ -522,7 +511,6 @@ const runComputation = () => {
     if (computeCount >= promptUpgradeAfter) {
       upgradePricingContainer.classList.add("is-visible");
       outputStage.classList.add("has-upgrade-visible");
-      updateMobileUpgradeReserve();
     }
 
     fitOutputText();
@@ -563,7 +551,6 @@ fitAllText();
 
 valueInput.addEventListener("input", sanitizeDecimalInput);
 window.addEventListener("resize", fitAllText);
-window.addEventListener("resize", updateMobileUpgradeReserve);
 const syncResponsiveControls = () => {
   syncUnitPickerMode();
   fitMobileControlText();
@@ -571,10 +558,8 @@ const syncResponsiveControls = () => {
 
 if (typeof nativeUnitMedia.addEventListener === "function") {
   nativeUnitMedia.addEventListener("change", syncResponsiveControls);
-  mobilePricingMedia.addEventListener("change", updateMobileUpgradeReserve);
 } else {
   nativeUnitMedia.addListener(syncResponsiveControls);
-  mobilePricingMedia.addListener(updateMobileUpgradeReserve);
 }
 unitSelect.addEventListener("change", updateUnitButton);
 valueInput.addEventListener("input", fitMobileControlText);
@@ -621,9 +606,4 @@ maxMoreButton.addEventListener("click", () => {
   );
   maxTier.classList.add("is-expanded");
   maxMoreButton.hidden = true;
-  window.requestAnimationFrame(updateMobileUpgradeReserve);
 });
-
-if ("ResizeObserver" in window) {
-  new ResizeObserver(updateMobileUpgradeReserve).observe(upgradePricingContainer);
-}
