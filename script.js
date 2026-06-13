@@ -348,28 +348,7 @@ const isDevtoolsShortcut = (event) => {
     || (event.ctrlKey && key === "u");
 };
 
-const isTextEntryActive = () => {
-  const activeElement = document.activeElement;
-  return activeElement instanceof HTMLInputElement
-    || activeElement instanceof HTMLTextAreaElement
-    || activeElement?.isContentEditable;
-};
-
-const isTouchViewport = () => window.matchMedia("(pointer: coarse)").matches
-  || window.matchMedia("(max-width: 820px)").matches;
-
-const detectDevtoolsByViewport = () => {
-  if (isTextEntryActive() || isTouchViewport()) {
-    return;
-  }
-
-  const widthGap = Math.abs(window.outerWidth - window.innerWidth);
-  const heightGap = Math.abs(window.outerHeight - window.innerHeight);
-
-  if (widthGap > 160 || heightGap > 160) {
-    showSourceGuard();
-  }
-};
+const canUseDesktopContextMenu = () => window.matchMedia("(pointer: fine)").matches;
 
 loadSnooperText();
 renderUnitOptions();
@@ -412,6 +391,14 @@ document.addEventListener("keydown", (event) => {
     unitButton.focus();
   }
 });
+document.addEventListener("contextmenu", (event) => {
+  if (!canUseDesktopContextMenu()) {
+    return;
+  }
+
+  event.preventDefault();
+  showSourceGuard();
+});
 converterForm.addEventListener("submit", (event) => {
   event.preventDefault();
   runComputation();
@@ -424,5 +411,3 @@ maxMoreButton.addEventListener("click", () => {
   );
   maxMoreButton.hidden = true;
 });
-
-window.setInterval(detectDevtoolsByViewport, 1000);
