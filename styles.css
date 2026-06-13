@@ -39,18 +39,19 @@ body {
   pointer-events: none;
 }
 
+/* God */
 .breathing-orb {
   width: min(90vw, 90vh, 980px);
   /* Keep it within window bounds */
   aspect-ratio: 1;
-  border-radius: 50%;
+  border-radius: 67%;
   background: radial-gradient(circle, rgba(69, 97, 197, 0.4) 0 14%, rgba(32, 55, 131, 0.3) 34%, rgba(15, 24, 64, 0.1) 56%, rgba(13, 15, 18, 0) 72%);
   filter: blur(40px);
   /* Softer fade */
-  opacity: 0.8;
+  opacity: 1.0;
   transform: scale(0.92);
   transform-origin: center;
-  animation: breathe 8s ease-in-out infinite;
+  animation: breathe 4s ease-in-out infinite;
 }
 
 @keyframes breathe {
@@ -78,7 +79,7 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 0 20px;
+  padding: 0 10px;
 }
 
 .converter {
@@ -86,14 +87,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.5rem;
-  /* Removed the negative transform that was pushing content off-screen */
 }
 
 .brand {
   margin: 0;
   color: rgba(216, 198, 144, 0.4);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: Baskerville, "Baskerville Old Face", "Times New Roman", serif;
   font-size: 32px;
   /* Stable size for measurement */
   min-height: 48px;
@@ -113,13 +112,12 @@ body {
   margin: 0;
   text-align: center;
   color: rgba(236, 229, 206, 0.8);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: Baskerville, "Baskerville Old Face", "Times New Roman", serif;
   font-size: 72px;
   /* Stable size for measurement */
   min-height: 100px;
   /* Reserved space */
   font-weight: 400;
-  line-height: 1.1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -135,6 +133,7 @@ body {
   flex-wrap: wrap;
   justify-content: center;
   align-items: stretch;
+  margin: 12px;
   gap: 12px;
   width: 100%;
   max-width: 600px;
@@ -320,7 +319,6 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
   opacity: 0;
   visibility: hidden;
   transition: opacity 1.0s ease-out, visibility 0.5s ease-out;
@@ -347,6 +345,7 @@ body {
 .pricing-tiers {
   display: flex;
   gap: 20px;
+  margin-top: 12px;
   width: 100%;
   max-width: 850px;
   justify-content: center;

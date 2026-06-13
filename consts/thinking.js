@@ -1,4 +1,4 @@
-export const thinkingDuration = 3200;
+export const thinkingDuration = 10;//3200;
 export const thinkingIntervalDuration = 1400;
 export const promptUpgradeCount = 2;
 
