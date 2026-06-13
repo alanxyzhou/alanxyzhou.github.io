@@ -1,7 +1,10 @@
-export const units = [
+export const defaultUnits = [
     { name: "meter", symbol: "m", mega: "Mm" },
     { name: "kilogram", symbol: "kg", mega: "Mkg" },
     { name: "second", symbol: "s", mega: "Ms" },
+];
+
+export const otherUnits = [
     { name: "ampere", symbol: "A", mega: "MA" },
     { name: "kelvin", symbol: "K", mega: "MK" },
     { name: "mole", symbol: "mol", mega: "Mmol" },
@@ -54,3 +57,5 @@ export const units = [
     { name: "dashboard gravitas", symbol: "dg", mega: "Mdg" },
     { name: "epistemic liquidity", symbol: "el", mega: "Mel" }
 ];
+
+export const units = [...defaultUnits, ...otherUnits];

@@ -59,11 +59,11 @@
       max-width: 650px;
     }
 
-    .info-section h1 {
+    .about-title-section h1 {
       font-family: Georgia, "Times New Roman", serif;
       font-size: 3rem;
       color: var(--gold);
-      margin-bottom: 24px;
+      margin: 0;
     }
 
     .info-section p {
@@ -91,12 +91,15 @@
   </div>
 
   <main class="about-content">
+    <section class="info-section about-title-section">
+      <h1 id="about-title"></h1>
+    </section>
+
     <div class="gallery" id="gallery-root">
       <!-- Dynamically populated -->
     </div>
 
     <section class="info-section">
-      <h1 id="about-title"></h1>
       <div id="about-text"></div>
     </section>
 
@@ -131,10 +134,13 @@
 
     // Dynamically Build Gallery
     const gallery = document.getElementById('gallery-root');
+    const placeholderSrc = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 4 5"%3E%3Crect width="4" height="5" fill="%23202124"/%3E%3C/svg%3E';
+
     prospectusImages.forEach((image, index) => {
       const img = document.createElement('img');
       const fullSrc = `../prospectus/${image.src}`;
-      img.src = `../prospectus/previews/${image.src}`;
+      const previewSrc = `../prospectus/previews/${image.src}`;
+      img.src = placeholderSrc;
       img.width = image.width;
       img.height = image.height;
       img.alt = `Prospectus visual ${index + 1}`;
@@ -142,6 +148,17 @@
       img.loading = index < 2 ? 'eager' : 'lazy';
       img.fetchPriority = index === 0 ? 'high' : 'auto';
       img.classList.add('is-preview');
+
+      const loadPreviewImage = () => {
+        const previewImage = new Image();
+        previewImage.decoding = 'async';
+        previewImage.onload = () => {
+          if (!hasRequestedFullImage) {
+            img.src = previewSrc;
+          }
+        };
+        previewImage.src = previewSrc;
+      };
 
       let hasRequestedFullImage = false;
       const loadFullImage = () => {
@@ -160,6 +177,7 @@
       };
 
       gallery.appendChild(img);
+      loadPreviewImage();
 
       if (!('IntersectionObserver' in window)) {
         img.classList.add('loaded');

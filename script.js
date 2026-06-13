@@ -1,4 +1,4 @@
-import { units } from './consts/units.js';
+import { defaultUnits, units } from './consts/units.js';
 import { welcomePrompts } from './consts/splash.js';
 import { thinkingTasks, getThinkingIntervalDuration, getThinkingDuration, promptUpgradeAfter } from './consts/thinking.js';
 import { maxExtraFeatures } from './consts/max-features.js';
@@ -67,6 +67,62 @@ const renderUnitOptions = () => {
 
 const getSelectedUnit = () => units.find((candidate) => candidate.symbol === unitSelect.value);
 
+const getRandomSiUnitSymbol = () => {
+  return defaultUnits[Math.floor(Math.random() * defaultUnits.length)]?.symbol ?? "m";
+};
+
+const getTextWidth = (() => {
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+
+  return (text, fontSize, fontFamily, fontWeight) => {
+    context.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+    return context.measureText(text).width;
+  };
+})();
+
+const fitBoxText = (element, text, maxFontSize, minFontSize, reservedWidth = 0) => {
+  const bounds = element.getBoundingClientRect();
+  const availableWidth = bounds.width - reservedWidth;
+  if (availableWidth <= 0 || !text) {
+    return;
+  }
+
+  const styles = window.getComputedStyle(element);
+  const fontFamily = styles.fontFamily;
+  const fontWeight = styles.fontWeight;
+  let low = minFontSize;
+  let high = maxFontSize;
+  let best = minFontSize;
+
+  while (low <= high) {
+    const mid = Math.floor((low + high) / 2);
+    if (getTextWidth(text, mid, fontFamily, fontWeight) <= availableWidth) {
+      best = mid;
+      low = mid + 1;
+    } else {
+      high = mid - 1;
+    }
+  }
+
+  element.style.fontSize = `${best}px`;
+};
+
+const fitMobileControlText = () => {
+  const selectedUnit = getSelectedUnit();
+  const unitLabel = selectedUnit ? `${selectedUnit.name} (${selectedUnit.symbol})` : "";
+
+  if (!nativeUnitMedia.matches) {
+    valueInput.style.removeProperty("font-size");
+    unitSelect.style.removeProperty("font-size");
+    fitBoxText(unitButton, unitLabel, 16, 10, 52);
+    return;
+  }
+
+  fitBoxText(valueInput, valueInput.value || valueInput.placeholder, 18, 12, 24);
+  fitBoxText(unitButton, unitLabel, 18, 12, 66);
+};
+
 const updateUnitButton = () => {
   const unit = getSelectedUnit();
   if (!unit) {
@@ -81,6 +137,8 @@ const updateUnitButton = () => {
     option.classList.toggle("is-selected", isSelected);
     option.setAttribute("aria-selected", String(isSelected));
   });
+
+  fitMobileControlText();
 };
 
 const syncUnitPickerMode = () => {
@@ -236,15 +294,15 @@ const fitTextToWidth = (element, maxFontSize, options = {}) => {
   element.style.fontSize = `${best}px`;
 };
 
-let fitTextFrameId = null;
+let fitHeadingFrameId = null;
 
-const fitAllText = () => {
-  if (fitTextFrameId !== null) {
+const fitHeadingText = () => {
+  if (fitHeadingFrameId !== null) {
     return;
   }
 
-  fitTextFrameId = window.requestAnimationFrame(() => {
-    fitTextFrameId = null;
+  fitHeadingFrameId = window.requestAnimationFrame(() => {
+    fitHeadingFrameId = null;
     if (window.matchMedia("(max-width: 560px)").matches) {
       brand.style.removeProperty("font-size");
     } else {
@@ -259,9 +317,27 @@ const fitAllText = () => {
         minFontSize: 24
       });
     }
+  });
+};
+
+let fitOutputFrameId = null;
+
+const fitOutputText = () => {
+  if (fitOutputFrameId !== null) {
+    return;
+  }
+
+  fitOutputFrameId = window.requestAnimationFrame(() => {
+    fitOutputFrameId = null;
     fitResultToStage();
     fitSourceGuardText();
+    fitMobileControlText();
   });
+};
+
+const fitAllText = () => {
+  fitHeadingText();
+  fitOutputText();
 };
 
 const fitSourceGuardText = () => {
@@ -354,7 +430,7 @@ const getNextRolodexIndex = () => {
 const setRandomRolodexMessage = () => {
   currentRolodexIndex = getNextRolodexIndex();
   rolodex.textContent = welcomePrompts[currentRolodexIndex];
-  fitAllText();
+  fitHeadingText();
 };
 
 const rotateRolodexMessage = () => {
@@ -399,7 +475,7 @@ const runComputation = () => {
       document.getElementById("upgrade-pricing-container").classList.add("is-visible");
     }
 
-    window.requestAnimationFrame(fitAllText);
+    fitOutputText();
   }, getThinkingDuration());
 };
 
@@ -425,22 +501,28 @@ const isDevtoolsShortcut = (event) => {
 
 loadSnooperText();
 renderUnitOptions();
-unitSelect.value = "m";
+unitSelect.value = getRandomSiUnitSymbol();
 updateUnitButton();
 syncUnitPickerMode();
 setRandomRolodexMessage();
-window.setInterval(rotateRolodexMessage, 10000);
+window.setInterval(rotateRolodexMessage, 6000);
 result.classList.add("is-muted");
 fitAllText();
 
 valueInput.addEventListener("input", sanitizeDecimalInput);
 window.addEventListener("resize", fitAllText);
+const syncResponsiveControls = () => {
+  syncUnitPickerMode();
+  fitMobileControlText();
+};
+
 if (typeof nativeUnitMedia.addEventListener === "function") {
-  nativeUnitMedia.addEventListener("change", syncUnitPickerMode);
+  nativeUnitMedia.addEventListener("change", syncResponsiveControls);
 } else {
-  nativeUnitMedia.addListener(syncUnitPickerMode);
+  nativeUnitMedia.addListener(syncResponsiveControls);
 }
 unitSelect.addEventListener("change", updateUnitButton);
+valueInput.addEventListener("input", fitMobileControlText);
 unitButton.addEventListener("click", () => {
   setUnitMenuOpen(unitMenu.hidden);
 });
