@@ -2,11 +2,11 @@ In the beginning, there was nothing. Then, God invented JavaScript. America has
 been full steam ahead ever since.
 
 For millenia, mankind has wondered: "What am I going to eat for dinner?" That
-very same hunger drives us forward today. At Megameter, we don't just think
-about numbers; we calculate them. We multiply them. We divide them. And one day,
-our numbers will be as ubiquitous as oxygen or gas station supplements. We know
-this isn't going to be an easy path. Big Numbers has tried - and failed - to
-stop us before, and we know they won't give up. Neither will we.
+very same hunger drives us forward today. At Megameter, we don't stop at
+thinking about numbers; we calculate them. We multiply them. We divide them. And
+one day, our numbers will be as ubiquitous as oxygen or gas station supplements.
+We know this isn't going to be an easy path. Big Numbers has tried - and failed
+- to stop us before, and we know they won't give up. Neither will we.
 
 Albert Einstein once said: E=MC². The world's most prominent philosophers and
 mathemeticians all ridiculed him. "What an asinine conclusion," they mocked.
