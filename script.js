@@ -1,6 +1,6 @@
 import { units } from './consts/units.js';
 import { welcomePrompts } from './consts/splash.js';
-import { thinkingTasks, thinkingIntervalDuration, thinkingDuration, promptUpgradeCount } from './consts/thinking.js';
+import { thinkingTasks, getThinkingIntervalDuration, getThinkingDuration, promptUpgradeAfter } from './consts/thinking.js';
 
 const valueInput = document.querySelector("#value-input");
 const unitSelect = document.querySelector("#unit-select");
@@ -216,7 +216,7 @@ const runComputation = () => {
   setThinkingText();
   setLoadingState(true);
 
-  thinkingMessageInterval = window.setInterval(setThinkingText, thinkingIntervalDuration);
+  thinkingMessageInterval = window.setInterval(setThinkingText, getThinkingIntervalDuration());
   thinkingTimeout = window.setTimeout(() => {
     window.clearInterval(thinkingMessageInterval);
     const computation = computeResultText();
@@ -224,12 +224,12 @@ const runComputation = () => {
     result.classList.toggle("is-muted", computation.isError);
     setLoadingState(false);
 
-    if (computeCount >= promptUpgradeCount) {
+    if (computeCount >= promptUpgradeAfter) {
       document.getElementById("upgrade-pricing-container").classList.add("is-visible");
     }
 
     window.requestAnimationFrame(fitAllText);
-  }, thinkingDuration);
+  }, getThinkingDuration());
 };
 
 renderUnitOptions();
