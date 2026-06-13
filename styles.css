@@ -22,12 +22,13 @@ body {
   width: 100vw;
   overflow: hidden;
   /* Anchor to window size, no scroll */
-  font-family: Georgia, "Times New Roman", serif;      
+  font-family: Georgia, "Times New Roman", serif;
   color: var(--ink);
   background: linear-gradient(140deg, #111315 0%, #0d0f12 38%, #101114 100%);
   display: flex;
   flex-direction: column;
 }
+
 .background-layer {
   position: fixed;
   inset: 0;
@@ -106,6 +107,7 @@ body {
   align-items: center;
   justify-content: center;
 }
+
 .welcome-prompt {
   margin: 0;
   text-align: center;
