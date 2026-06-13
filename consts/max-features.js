@@ -1,0 +1,18 @@
+export const maxExtraFeatures = [
+  "Early forefront model access",
+  "Agentic computing and research",
+  "Project knowledge",
+  "Advanced image processing ",
+  "Predictive data entry ",
+  "Reinforcement learning",
+  "Real-time threat monitoring",
+  "Moat digging",
+  "Autonomous driving",
+  "Exposure to SpaceX IPO ",
+  "Precognitive analytics",
+  "Benefits administration ",
+  "sudo ",
+  "Insider information",
+  "MCP CPAs",
+  "Free lunch and dinner",
+];
