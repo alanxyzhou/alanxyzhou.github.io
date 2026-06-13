@@ -1,7 +1,7 @@
 import { defaultUnits, units } from './consts/units.js';
 import { welcomePrompts } from './consts/splash.js';
 import { thinkingTasks, getThinkingIntervalDuration, getThinkingDuration, promptUpgradeAfter } from './consts/thinking.js';
-import { maxExtraFeatures } from './consts/max-features.js';
+import { maxBasePerks, maxExtraPerks } from './consts/max-plan-perks.js';
 
 const valueInput = document.querySelector("#value-input");
 const unitSelect = document.querySelector("#unit-select");
@@ -86,6 +86,18 @@ const renderUnitOptions = () => {
       return `<button class="unit-option" type="button" role="option" data-symbol="${unit.symbol}">${label}</button>`;
     })
     .join("");
+};
+
+const renderPerks = (list, perks) => {
+  const fragment = document.createDocumentFragment();
+
+  perks.forEach((perk) => {
+    const item = document.createElement("li");
+    item.textContent = perk;
+    fragment.append(item);
+  });
+
+  list.append(fragment);
 };
 
 const getSelectedUnit = () => units.find((candidate) => candidate.symbol === unitSelect.value);
@@ -531,6 +543,7 @@ const showSourceGuard = () => {
 };
 
 renderUnitOptions();
+renderPerks(maxBaseFeaturesList, maxBasePerks);
 unitSelect.value = getRandomSiUnitSymbol();
 updateUnitButton();
 syncUnitPickerMode();
@@ -593,10 +606,7 @@ converterForm.addEventListener("submit", (event) => {
 });
 
 maxMoreButton.addEventListener("click", () => {
-  maxBaseFeaturesList.insertAdjacentHTML(
-    "beforeend",
-    maxExtraFeatures.map((feature) => `<li>${feature}</li>`).join("")
-  );
+  renderPerks(maxBaseFeaturesList, maxExtraPerks);
   maxTier.classList.add("is-expanded");
   maxMoreButton.hidden = true;
 });
