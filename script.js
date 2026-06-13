@@ -99,7 +99,17 @@ const computeResultText = () => {
 };
 
 const setThinkingText = () => {
-  thinkingText.textContent = thinkingTasks[Math.floor(Math.random() * thinkingTasks.length)];
+  if (usedThinkingTaskIndices.size >= thinkingTasks.length) {
+    usedThinkingTaskIndices.clear();
+  }
+
+  let taskIndex;
+  do {
+    taskIndex = Math.floor(Math.random() * thinkingTasks.length);
+  } while (usedThinkingTaskIndices.has(taskIndex));
+
+  usedThinkingTaskIndices.add(taskIndex);
+  thinkingText.textContent = thinkingTasks[taskIndex];
 };
 
 const setLoadingState = (isLoading) => {
@@ -201,6 +211,7 @@ const setRandomWelcomePrompt = () => {
 let thinkingMessageInterval = null;
 let thinkingTimeout = null;
 let computeCount = 0;
+const usedThinkingTaskIndices = new Set();
 
 const runComputation = () => {
   if (!valueInput.value.trim()) {
