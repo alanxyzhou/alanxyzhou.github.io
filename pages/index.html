@@ -6,6 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>megameter.com</title>
   <link rel="stylesheet" href="../styles.css">
+  <link rel="prefetch" as="image" href="../prospectus/previews/a07_image.jpg" media="(max-width: 820px)">
+  <link rel="prefetch" as="image" href="../prospectus/previews/a08_image.jpg" media="(max-width: 820px)">
+  <link rel="prefetch" as="image" href="../prospectus/previews/a09_image.jpg" media="(max-width: 820px)">
+  <link rel="prefetch" as="image" href="../prospectus/previews/a10_image.jpg" media="(max-width: 820px)">
+  <link rel="prefetch" as="image" href="../prospectus/previews/a11_image.jpg" media="(max-width: 820px)">
+  <link rel="prefetch" as="image" href="../prospectus/previews/a12_image.jpg" media="(max-width: 820px)">
+  <link rel="prefetch" as="image" href="../prospectus/previews/a13_image.jpg" media="(max-width: 820px)">
+  <link rel="prefetch" as="image" href="../prospectus/previews/a15_image.jpg" media="(max-width: 820px)">
 </head>
 
 <body>
@@ -20,7 +28,9 @@
   <main class="shell">
     <section class="converter" aria-labelledby="site-title">
       <p class="brand" id="site-title">megameter: automation for the artificial intelligence era</p>
-      <h1 class="welcome-prompt" id="welcome-prompt" aria-live="polite"></h1>
+      <div class="rolodex">
+        <h1 class="welcome-prompt" id="welcome-prompt" aria-live="polite"></h1>
+      </div>
 
       <form class="controls" id="converter-form">
         <label class="field">
@@ -54,7 +64,10 @@
           <span class="result-value" id="result-value"></span>
           <div class="upgrade-pricing-container" id="upgrade-pricing-container">
             <div class="usage-limits-text">
-              <p class="usage-limits-info">You're reaching your usage limits. Upgrade for increased access.</p>
+              <p class="usage-limits-info">
+                <span>You're reaching your usage limits.</span>
+                <span>Upgrade for increased access.</span>
+              </p>
               <p class="usage-limits-upsell">For enterprise pricing, please contact billing@megameter.com.</p>
             </div>
             <div class="pricing-tiers">
@@ -94,9 +107,7 @@
   <footer class="footer">
     <div><span aria-hidden="true">&copy;</span> megameter inc. 2026</div>
     <div class="footer-links">
-      <a href="about.html">about</a>
-      <span class="separator" aria-hidden="true">|</span>
-      <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">legal</a>
+      <a class="footer-cta" href="about.html">About Megameter</a>
     </div>
   </footer>
 

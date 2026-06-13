@@ -13,7 +13,7 @@ const resultValue = document.querySelector("#result-value");
 const result = document.querySelector("#result");
 const converterForm = document.querySelector("#converter-form");
 const brand = document.querySelector(".brand");
-const welcomePrompt = document.querySelector("#welcome-prompt");
+const rolodex = document.querySelector("#welcome-prompt");
 const computeButton = document.querySelector("#compute-button");
 const outputStage = document.querySelector("#output-stage");
 const thinkingPanel = document.querySelector("#thinking-panel");
@@ -24,6 +24,7 @@ const sourceGuardText = document.querySelector("#source-guard-text");
 const maxMoreButton = document.querySelector("#max-more-button");
 const maxBaseFeaturesList = document.querySelector("#max-base-features");
 const comedianValues = new Set([67, 69, 420]);
+const nativeUnitMedia = window.matchMedia("(max-width: 560px), (pointer: coarse)");
 
 const loadSnooperText = () => fetch(new URL("./consts/snooper.md", import.meta.url))
   .then((response) => response.text())
@@ -80,6 +81,16 @@ const updateUnitButton = () => {
     option.classList.toggle("is-selected", isSelected);
     option.setAttribute("aria-selected", String(isSelected));
   });
+};
+
+const syncUnitPickerMode = () => {
+  const useNativeSelect = nativeUnitMedia.matches;
+  unitSelect.setAttribute("aria-hidden", String(!useNativeSelect));
+  unitSelect.tabIndex = useNativeSelect ? 0 : -1;
+
+  if (useNativeSelect) {
+    setUnitMenuOpen(false);
+  }
 };
 
 const setUnitMenuOpen = (isOpen) => {
@@ -174,13 +185,14 @@ const fitTextToWidth = (element, maxFontSize, options = {}) => {
   const originalWhiteSpace = element.style.whiteSpace;
   const originalOverflowWrap = element.style.overflowWrap;
 
-  const allowTwoLines = options.mobileTwoLines && window.matchMedia("(max-width: 560px)").matches;
-  const maxLines = allowTwoLines ? 2 : 1;
+  const mobileTwoLines = options.mobileTwoLines && window.matchMedia("(max-width: 560px)").matches;
+  const maxLines = options.maxLines ?? (mobileTwoLines ? 2 : 1);
+  const allowWrapping = maxLines > 1;
 
-  element.style.width = allowTwoLines ? `${maxWidth}px` : "max-content";
+  element.style.width = allowWrapping ? `${maxWidth}px` : "max-content";
   element.style.display = "block";
-  element.style.whiteSpace = allowTwoLines ? "normal" : "nowrap";
-  element.style.overflowWrap = allowTwoLines ? "anywhere" : originalOverflowWrap;
+  element.style.whiteSpace = allowWrapping ? "normal" : "nowrap";
+  element.style.overflowWrap = allowWrapping ? "anywhere" : originalOverflowWrap;
 
   const minFontSize = options.minFontSize ?? 8;
   let low = minFontSize;
@@ -193,7 +205,7 @@ const fitTextToWidth = (element, maxFontSize, options = {}) => {
 
     const textBounds = element.getBoundingClientRect();
     const lineHeight = getLineHeight(element, mid);
-    const fitsWidth = allowTwoLines ? element.scrollWidth <= maxWidth + 1 : element.offsetWidth <= maxWidth;
+    const fitsWidth = allowWrapping ? element.scrollWidth <= maxWidth + 1 : element.offsetWidth <= maxWidth;
     const fitsLines = textBounds.height <= lineHeight * maxLines + 1;
 
     if (fitsWidth && fitsLines) {
@@ -212,13 +224,24 @@ const fitTextToWidth = (element, maxFontSize, options = {}) => {
   element.style.fontSize = `${best}px`;
 };
 
+let fitTextFrameId = null;
+
 const fitAllText = () => {
-  window.requestAnimationFrame(() => {
+  if (fitTextFrameId !== null) {
+    return;
+  }
+
+  fitTextFrameId = window.requestAnimationFrame(() => {
+    fitTextFrameId = null;
     fitTextToWidth(brand, 32, {
       mobileTwoLines: true,
       minFontSize: window.matchMedia("(max-width: 560px)").matches ? 18 : 8
     });
-    fitTextToWidth(welcomePrompt, 72);
+    const isMobileRolodex = window.matchMedia("(max-width: 560px)").matches;
+    fitTextToWidth(rolodex, 72, {
+      maxLines: isMobileRolodex ? 2 : 1,
+      minFontSize: isMobileRolodex ? 18 : 24
+    });
     fitResultToStage();
     fitSourceGuardText();
   });
@@ -296,9 +319,34 @@ const fitResultToStage = () => {
   resultValue.style.setProperty("--result-size", `${Math.floor(low)}px`);
 };
 
-const setRandomWelcomePrompt = () => {
-  welcomePrompt.textContent = welcomePrompts[Math.floor(Math.random() * welcomePrompts.length)];
+let currentRolodexIndex = -1;
+
+const getNextRolodexIndex = () => {
+  if (welcomePrompts.length <= 1) {
+    return 0;
+  }
+
+  let nextIndex;
+  do {
+    nextIndex = Math.floor(Math.random() * welcomePrompts.length);
+  } while (nextIndex === currentRolodexIndex);
+
+  return nextIndex;
+};
+
+const setRandomRolodexMessage = () => {
+  currentRolodexIndex = getNextRolodexIndex();
+  rolodex.textContent = welcomePrompts[currentRolodexIndex];
   fitAllText();
+};
+
+const rotateRolodexMessage = () => {
+  rolodex.classList.add("is-transitioning");
+
+  window.setTimeout(() => {
+    setRandomRolodexMessage();
+    rolodex.classList.remove("is-transitioning");
+  }, 450);
 };
 
 
@@ -362,12 +410,20 @@ loadSnooperText();
 renderUnitOptions();
 unitSelect.value = "m";
 updateUnitButton();
-setRandomWelcomePrompt();
+syncUnitPickerMode();
+setRandomRolodexMessage();
+window.setInterval(rotateRolodexMessage, 10000);
 result.classList.add("is-muted");
 fitAllText();
 
 valueInput.addEventListener("input", sanitizeDecimalInput);
 window.addEventListener("resize", fitAllText);
+if (typeof nativeUnitMedia.addEventListener === "function") {
+  nativeUnitMedia.addEventListener("change", syncUnitPickerMode);
+} else {
+  nativeUnitMedia.addListener(syncUnitPickerMode);
+}
+unitSelect.addEventListener("change", updateUnitButton);
 unitButton.addEventListener("click", () => {
   setUnitMenuOpen(unitMenu.hidden);
 });
