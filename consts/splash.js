@@ -17,7 +17,7 @@ export const welcomePrompts = [
     "Push beyond what's possible.",
     "Lead with magnitude.",
     "The best time to scale was yesterday. The second best time is now.",
-    "What could your number become?",
+    "What could your value become?",
     "Your future self thinks in megas.",
     "Every transformation starts with a single input.",
     "The world rewards those who think bigger.",

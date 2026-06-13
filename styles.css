@@ -335,16 +335,13 @@ body {
   color: var(--muted);
   font-size: 0.9rem;
   margin: 0;
-  margin-bottom: 0;
-  margin-top: 0;
 }
 
 .usage-limits-upsell {
-  color: var(--muted);
-  font-size: 0.9rem;
+  color: var(--dim);
+  font-size: 0.8rem;
+  font-style: italic;
   margin: 0;
-  margin-bottom: 0;
-  margin-top: 0;
 }
 
 .pricing-tiers {
