@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>megameter.com</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+
+<body>
+  <div class="background-layer" aria-hidden="true">
+    <div class="breathing-orb"></div>
+  </div>
+
+  <main class="shell">
+    <section class="converter" aria-labelledby="site-title">
+      <p class="brand" id="site-title">megameter: automation for the artificial intelligence era</p>
+      <h1 class="welcome-prompt" id="welcome-prompt" aria-live="polite"></h1>
+
+      <form class="controls" id="converter-form">
+        <label class="field">
+          <span class="sr-only">Value</span>
+          <input id="value-input" type="text" inputmode="decimal" autocomplete="off" aria-describedby="site-title"
+            placeholder="Enter your quantity">
+        </label>
+
+        <div class="unit-picker" id="unit-picker">
+          <select class="native-unit-select" id="unit-select" aria-hidden="true" tabindex="-1"></select>
+          <button class="unit-button" id="unit-button" type="button" aria-expanded="false" aria-haspopup="listbox">
+            <span id="unit-button-text">meter</span>
+          </button>
+
+          <div class="unit-menu" id="unit-menu" role="listbox" hidden>
+            <div class="unit-menu-scroll" id="unit-menu-scroll"></div>
+          </div>
+        </div>
+
+        <button class="compute-button" id="compute-button" type="submit">Compute</button>
+      </form>
+
+      <section class="output-stage" id="output-stage" aria-live="polite">
+        <div class="thinking-panel" id="thinking-panel" hidden>
+          <span class="spinner" aria-hidden="true"></span>
+          <p id="thinking-text">Initializing dimensional ontology...</p>
+        </div>
+
+        <output class="result" id="result" for="value-input unit-select">
+          <span class="result-value" id="result-value"></span>
+          <div class="upgrade-pricing-container" id="upgrade-pricing-container">
+            <div class="usage-limits-text">
+              <p class="usage-limits-info">You're reaching your usage limits. Upgrade for increased access.</p>
+              <p class="usage-limits-upsell">For enterprise pricing, please contact billing@megameter.com.</p>
+            </div>
+            <div class="pricing-tiers">
+
+              <div class="tier tier-free">
+                <h3 style="text-align: center;">Free (current)</h3>
+                <ul>
+                  <li>10 queries/day</li>
+                  <li>Quick responses</li>
+                  <li>Basic thinking</li>
+                </ul>
+              </div>
+              <div class="tier tier-pro">
+                <h3 style="text-align: center;">Pro ($20/month)</h3>
+                <ul>
+                  <li>5-20x increased usage</li>
+                  <li>Faster responses</li>
+                  <li>Improved reasoning</li>
+                </ul>
+              </div>
+              <div class="tier tier-max">
+                <h3 style="text-align: center;">Max ($150/month)</h3>
+                <ul>
+                  <li>Unlimited usage*</li>
+                  <li>Blazingly fast responses</li>
+                  <li>Deepest world models</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </output>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div><span aria-hidden="true">&copy;</span> megameter inc. 2026</div>
+    <div class="footer-links">
+      <a href="about.html">about</a>
+      <span class="separator" aria-hidden="true">|</span>
+      <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ">legal</a>
+    </div>
+  </footer>
+
+  <script type="module" src="../script.js"></script>
+</body>
+
+</html>

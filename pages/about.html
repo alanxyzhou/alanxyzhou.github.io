@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About | megameter.com</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    body {
+      height: auto;
+      overflow-y: auto;
+    }
+
+    .about-content {
+      position: relative;
+      z-index: 1;
+      width: min(100% - 32px, 800px);
+      margin: 0 auto;
+      padding: 80px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 60px;
+    }
+
+    .gallery {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      width: 100%;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+
+    .gallery img.loaded {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .info-section {
+      text-align: center;
+      max-width: 650px;
+    }
+
+    .info-section h1 {
+      font-family: Georgia, serif;
+      font-size: 3rem;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+
+    .info-section p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--muted);
+      text-align: justify;
+      text-align-last: center;
+    }
+
+    .back-home {
+      margin-top: 40px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="background-layer" aria-hidden="true">
+    <div class="breathing-orb"></div>
+  </div>
+
+  <main class="about-content">
+    <div class="gallery" id="gallery-root">
+      <!-- Dynamically populated -->
+    </div>
+
+    <section class="info-section">
+      <h1 id="about-title"></h1>
+      <p id="about-text"></p>
+    </section>
+
+    <div class="back-home">
+      <a href="index.html" class="footer a">Return to divine intillect</a>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div><span aria-hidden="true">&copy;</span> megameter inc. 2026</div>
+  </footer>
+
+  <script type="module">
+    import { aboutTitle, aboutText, prospectusImages } from '../consts/about.js';
+
+    // Inject Text Content
+    document.getElementById('about-title').textContent = aboutTitle;
+    document.getElementById('about-text').textContent = aboutText;
+
+    // Dynamically Build Gallery
+    const gallery = document.getElementById('gallery-root');
+    prospectusImages.forEach((imgSrc, index) => {
+      const img = document.createElement('img');
+      img.src = `../prospectus/${imgSrc}`;
+      img.alt = `Prospectus visual ${index + 1}`;
+
+      // Add fade-in effect when image enters viewport
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            img.classList.add('loaded');
+            observer.unobserve(img);
+          }
+        });
+      }, { threshold: 0.1 });
+
+      gallery.appendChild(img);
+      observer.observe(img);
+    });
+  </script>
+</body>
+
+</html>
