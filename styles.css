@@ -96,8 +96,9 @@ body {
   font-family: Georgia, "Times New Roman", serif;
   font-size: 32px;
   /* Stable size for measurement */
-  min-height: 40px;
+  min-height: 48px;
   font-weight: 400;
+  line-height: 1.2;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
@@ -115,9 +116,9 @@ body {
   font-family: Georgia, "Times New Roman", serif;
   font-size: 72px;
   /* Stable size for measurement */
-  min-height: 80px;
+  min-height: 96px;
   font-weight: 400;
-  line-height: 1;
+  line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
