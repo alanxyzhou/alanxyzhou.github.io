@@ -530,13 +530,6 @@ const showSourceGuard = () => {
   sourceGuard.setAttribute("aria-hidden", "false");
 };
 
-const isDevtoolsShortcut = (event) => {
-  const key = event.key.toLowerCase();
-  return event.key === "F12"
-    || (event.ctrlKey && event.shiftKey && ["i", "j", "c"].includes(key))
-    || (event.metaKey && event.altKey && ["i", "j", "c"].includes(key));
-};
-
 renderUnitOptions();
 unitSelect.value = getRandomSiUnitSymbol();
 updateUnitButton();
@@ -583,7 +576,7 @@ document.addEventListener("click", (event) => {
   }
 });
 document.addEventListener("keydown", (event) => {
-  if (isDesktopInspectionSurface() && isDevtoolsShortcut(event)) {
+  if (isDesktopInspectionSurface() && event.key === "F12") {
     event.preventDefault();
     showSourceGuard();
     return;
