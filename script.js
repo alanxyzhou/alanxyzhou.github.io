@@ -37,9 +37,18 @@ const formatNumber = (value) => {
     return "";
   }
 
-  return new Intl.NumberFormat("en-US", {
+  const formatted = new Intl.NumberFormat("en-US", {
     maximumFractionDigits: 12
   }).format(value);
+
+  const digitCount = formatted.replace(/\D/g, "").length;
+  if (digitCount <= 12) {
+    return formatted;
+  }
+
+  return value.toExponential(6)
+    .replace(/(\.\d*?)0+e/, "$1e")
+    .replace(".e", "e");
 };
 
 const renderUnitOptions = () => {
@@ -232,23 +241,32 @@ const fitSourceGuardText = () => {
 const fitResultToStage = () => {
   if (result.hidden || result.classList.contains("is-muted")) {
     resultValue.style.removeProperty("--result-size");
+    resultValue.style.removeProperty("width");
+    resultValue.style.removeProperty("white-space");
     return;
   }
 
+  const stageBounds = outputStage.getBoundingClientRect();
+  const maxWidth = Math.floor(stageBounds.width * 0.92);
+  if (maxWidth <= 0) return;
+
   // Enforce small baseline size to clear sizing memory and find constraints accurately
   resultValue.style.setProperty("--result-size", "10px");
+  resultValue.style.width = `${maxWidth}px`;
+  resultValue.style.whiteSpace = "nowrap";
 
-  const stageBounds = outputStage.getBoundingClientRect();
   let low = 1;
-  let high = Math.min(260, stageBounds.height * 0.95);
+  let high = Math.min(260, Math.max(stageBounds.height * 0.95, 80));
 
   while (high - low > 1) {
     const mid = (low + high) / 2;
     resultValue.style.setProperty("--result-size", `${mid}px`);
 
     const valueBounds = resultValue.getBoundingClientRect();
-    // Added safety padding factor check against edge boundaries
-    if (valueBounds.width <= stageBounds.width * 0.92 && valueBounds.height <= stageBounds.height) {
+    const fitsWidth = resultValue.scrollWidth <= maxWidth + 1;
+    const fitsHeight = valueBounds.height <= stageBounds.height;
+
+    if (fitsWidth && fitsHeight) {
       low = mid;
     } else {
       high = mid;
