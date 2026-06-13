@@ -18,8 +18,19 @@ const computeButton = document.querySelector("#compute-button");
 const outputStage = document.querySelector("#output-stage");
 const thinkingPanel = document.querySelector("#thinking-panel");
 const thinkingText = document.querySelector("#thinking-text");
+const comedianMessage = document.querySelector("#snooper-deterrant");
+const sourceGuard = document.querySelector("#source-guard");
+const sourceGuardText = document.querySelector("#source-guard-text");
 const maxMoreButton = document.querySelector("#max-more-button");
 const maxBaseFeaturesList = document.querySelector("#max-base-features");
+const comedianValues = new Set([67, 69, 420]);
+
+const loadSnooperText = () => fetch(new URL("./consts/snooper.md", import.meta.url))
+  .then((response) => response.text())
+  .then((text) => {
+    sourceGuardText.textContent = text.trim().replace(/\n/g, " ");
+    fitSourceGuardText();
+  });
 
 const formatNumber = (value) => {
   if (!Number.isFinite(value)) {
@@ -86,18 +97,21 @@ const sanitizeDecimalInput = () => {
 
 const computeResultText = () => {
   const value = Number.parseFloat(valueInput.value);
+  const exactValue = Number(valueInput.value);
   const unit = getSelectedUnit();
 
   if (!Number.isFinite(value) || !unit) {
     return {
       text: "Please enter a number",
-      isError: true
+      isError: true,
+      isTopLevel: false
     };
   }
 
   return {
     text: `${formatNumber(value / 1e6)} ${unit.mega}`,
-    isError: false
+    isError: false,
+    isTopLevel: comedianValues.has(exactValue)
   };
 };
 
@@ -123,6 +137,10 @@ const setLoadingState = (isLoading) => {
   setUnitMenuOpen(false);
   thinkingPanel.hidden = !isLoading;
   result.hidden = isLoading;
+
+  if (isLoading) {
+    comedianMessage.hidden = true;
+  }
 };
 
 const fitTextToWidth = (element, maxFontSize) => {
@@ -173,7 +191,42 @@ const fitAllText = () => {
     fitTextToWidth(brand, 32);
     fitTextToWidth(welcomePrompt, 72);
     fitResultToStage();
+    fitSourceGuardText();
   });
+};
+
+const fitSourceGuardText = () => {
+  if (!sourceGuard || !sourceGuardText) return;
+
+  const guardBounds = sourceGuard.getBoundingClientRect();
+  const maxWidth = guardBounds.width - 48;
+  const maxHeight = guardBounds.height - 48;
+
+  if (maxWidth <= 0 || maxHeight <= 0 || !sourceGuardText.textContent.trim()) {
+    return;
+  }
+
+  sourceGuardText.style.width = `${Math.min(760, maxWidth)}px`;
+
+  let low = 8;
+  let high = 96;
+  let best = low;
+
+  while (low <= high) {
+    const mid = Math.floor((low + high) / 2);
+    sourceGuardText.style.setProperty("--source-guard-size", `${mid}px`);
+
+    const textBounds = sourceGuardText.getBoundingClientRect();
+
+    if (textBounds.width <= maxWidth && textBounds.height <= maxHeight) {
+      best = mid;
+      low = mid + 1;
+    } else {
+      high = mid - 1;
+    }
+  }
+
+  sourceGuardText.style.setProperty("--source-guard-size", `${best}px`);
 };
 
 const fitResultToStage = () => {
@@ -235,6 +288,7 @@ const runComputation = () => {
     window.clearInterval(thinkingMessageInterval);
     const computation = computeResultText();
     resultValue.textContent = computation.text;
+    comedianMessage.hidden = !computation.isTopLevel;
     result.classList.toggle("is-muted", computation.isError);
     setLoadingState(false);
 
@@ -246,6 +300,30 @@ const runComputation = () => {
   }, getThinkingDuration());
 };
 
+const showSourceGuard = () => {
+  fitSourceGuardText();
+  document.body.classList.add("is-a-little-bitch");
+  sourceGuard.setAttribute("aria-hidden", "false");
+};
+
+const isDevtoolsShortcut = (event) => {
+  const key = event.key.toLowerCase();
+  return event.key === "F12"
+    || (event.ctrlKey && event.shiftKey && ["i", "j", "c"].includes(key))
+    || (event.metaKey && event.altKey && ["i", "j", "c"].includes(key))
+    || (event.ctrlKey && key === "u");
+};
+
+const detectDevtoolsByViewport = () => {
+  const widthGap = Math.abs(window.outerWidth - window.innerWidth);
+  const heightGap = Math.abs(window.outerHeight - window.innerHeight);
+
+  if (widthGap > 160 || heightGap > 160) {
+    showSourceGuard();
+  }
+};
+
+loadSnooperText();
 renderUnitOptions();
 unitSelect.value = "m";
 updateUnitButton();
@@ -275,6 +353,12 @@ document.addEventListener("click", (event) => {
   }
 });
 document.addEventListener("keydown", (event) => {
+  if (isDevtoolsShortcut(event)) {
+    event.preventDefault();
+    showSourceGuard();
+    return;
+  }
+
   if (event.key === "Escape") {
     setUnitMenuOpen(false);
     unitButton.focus();
@@ -292,3 +376,5 @@ maxMoreButton.addEventListener("click", () => {
   );
   maxMoreButton.hidden = true;
 });
+
+window.setInterval(detectDevtoolsByViewport, 1000);

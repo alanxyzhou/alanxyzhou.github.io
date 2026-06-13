@@ -39,6 +39,38 @@ body {
   pointer-events: none;
 }
 
+.source-guard {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: var(--gold);
+  background: #0d0f12;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease-out;
+}
+
+.source-guard p {
+  width: min(100%, 760px);
+  max-height: 100%;
+  font-size: var(--source-guard-size, clamp(2rem, 7vw, 5rem));
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+body.is-a-little-bitch {
+  overflow: hidden;
+}
+
+body.is-a-little-bitch .source-guard {
+  opacity: 1;
+  pointer-events: auto;
+}
+
 /* God */
 .breathing-orb {
   width: min(90vw, 90vh, 980px);
@@ -326,6 +358,13 @@ body {
   color: var(--gold);
   max-width: 100%;
   overflow-wrap: break-word;
+}
+
+.snooper-deterrant {
+  margin-bottom: 8px;
+  color: var(--ink);
+  font-size: 1rem;
+  line-height: 1.35;
 }
 
 .upgrade-pricing-container {
