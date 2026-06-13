@@ -182,9 +182,10 @@ const fitTextToWidth = (element, maxFontSize, options = {}) => {
   element.style.whiteSpace = allowTwoLines ? "normal" : "nowrap";
   element.style.overflowWrap = allowTwoLines ? "anywhere" : originalOverflowWrap;
 
-  let low = 8;
+  const minFontSize = options.minFontSize ?? 8;
+  let low = minFontSize;
   let high = maxFontSize;
-  let best = 8;
+  let best = minFontSize;
 
   while (low <= high) {
     const mid = Math.floor((low + high) / 2);
@@ -213,7 +214,10 @@ const fitTextToWidth = (element, maxFontSize, options = {}) => {
 
 const fitAllText = () => {
   window.requestAnimationFrame(() => {
-    fitTextToWidth(brand, 32, { mobileTwoLines: true });
+    fitTextToWidth(brand, 32, {
+      mobileTwoLines: true,
+      minFontSize: window.matchMedia("(max-width: 560px)").matches ? 18 : 8
+    });
     fitTextToWidth(welcomePrompt, 72);
     fitResultToStage();
     fitSourceGuardText();
@@ -334,7 +338,14 @@ const runComputation = () => {
   }, getThinkingDuration());
 };
 
+const isDesktopInspectionSurface = () => window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 821px)").matches
+  && navigator.maxTouchPoints === 0;
+
 const showSourceGuard = () => {
+  if (!isDesktopInspectionSurface()) {
+    return;
+  }
+
   fitSourceGuardText();
   document.body.classList.add("is-a-little-bitch");
   sourceGuard.setAttribute("aria-hidden", "false");
@@ -344,11 +355,8 @@ const isDevtoolsShortcut = (event) => {
   const key = event.key.toLowerCase();
   return event.key === "F12"
     || (event.ctrlKey && event.shiftKey && ["i", "j", "c"].includes(key))
-    || (event.metaKey && event.altKey && ["i", "j", "c"].includes(key))
-    || (event.ctrlKey && key === "u");
+    || (event.metaKey && event.altKey && ["i", "j", "c"].includes(key));
 };
-
-const canUseDesktopContextMenu = () => window.matchMedia("(pointer: fine)").matches;
 
 loadSnooperText();
 renderUnitOptions();
@@ -380,7 +388,7 @@ document.addEventListener("click", (event) => {
   }
 });
 document.addEventListener("keydown", (event) => {
-  if (isDevtoolsShortcut(event)) {
+  if (isDesktopInspectionSurface() && isDevtoolsShortcut(event)) {
     event.preventDefault();
     showSourceGuard();
     return;
@@ -392,7 +400,7 @@ document.addEventListener("keydown", (event) => {
   }
 });
 document.addEventListener("contextmenu", (event) => {
-  if (!canUseDesktopContextMenu()) {
+  if (!isDesktopInspectionSurface()) {
     return;
   }
 
