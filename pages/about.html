@@ -89,7 +89,7 @@
     </section>
 
     <div class="back-home">
-      <a href="index.html" class="footer a">Return to divine intillect</a>
+      <a href="index.html" class="footer a">Return to divine intellect</a>
     </div>
   </main>
 
@@ -98,11 +98,23 @@
   </footer>
 
   <script type="module">
-    import { aboutTitle, aboutText, prospectusImages } from '../consts/about.js';
+    import { aboutTitle, prospectusImages } from '../consts/about.js';
 
     // Inject Text Content
     document.getElementById('about-title').textContent = aboutTitle;
-    document.getElementById('about-text').textContent = aboutText;
+    fetch('../consts/about.md')
+      .then(response => response.text())
+      .then(text => {
+        // Process Markdown-style newlines:
+        // 1. Single newlines -> spaces (for easy IDE word-wrap)
+        // 2. Double newlines -> actual breaks
+        const processedText = text
+          .trim()
+          .replace(/([^\n])\n([^\n])/g, '$1 $2')
+          .replace(/\n\n+/g, '<br><br>');
+
+        document.getElementById('about-text').innerHTML = processedText;
+      });
 
     // Dynamically Build Gallery
     const gallery = document.getElementById('gallery-root');
